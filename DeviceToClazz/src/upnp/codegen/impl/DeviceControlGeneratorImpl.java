@@ -72,9 +72,41 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         writer.write(String.format("public class %s extends AbstractDevice {\r\n", device.getDeviceType().getName()));
         writer.write("\r\n");
 
-        writer.write(String.format("private static final String TAG = %s.class.getSimpleName();\r\n",
+        writer.write(String.format("    private static final String TAG = %s.class.getSimpleName();\r\n",
                 device.getDeviceType().getName()));
         
+        /**
+         * deviceType & serviceType
+         */
+        writer.write("    /**\r\n");
+        writer.write("     * deviceType & serviceType\r\n");
+        writer.write("     */\r\n");
+        writer.write(String.format("    public static final String DEVICE_TYPE = \"%s\";\r\n", device.getDeviceType().getName()));
+        for (Service s : device.getServices().values()) {
+            String name = s.getType().getName();
+            writer.write(String.format("    public static final String SERVICE_%s = \"%s\";\r\n", name, name));
+        }
+        writer.write("\r\n");
+
+        /**
+         * serviceId
+         */
+        writer.write("    /**\r\n");
+        writer.write("     * serviceId\r\n");
+        writer.write("     */\r\n");
+        for (Service s : device.getServices().values()) {
+            writer.write(String.format("    private static final String ID_%s = \"%s\";\r\n", s.getType().getName(), s.getServiceId()));
+        }
+        writer.write("\r\n");
+        
+        /**
+         * services
+         */
+        writer.write("    /**\r\n");
+        writer.write("     * services\r\n");
+        writer.write("     */\r\n");
+        writer.write("\r\n");
+
         for (Service s : device.getServices().values()) {
             writer.write(String.format("    private %s _%s;\r\n", s.getType().getName(), s.getType().getName()));
         }
@@ -92,11 +124,6 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
          * private static final String DEVICE_TYPE = "MediaRenderer";
          */
         writer.write(String.format("    private static final Object classLock = %s.class;\r\n", device.getDeviceType().getName()));
-        writer.write(String.format("    private static final String DEVICE_TYPE = \"%s\";\r\n", device.getDeviceType().getName()));
-        for (Service s : device.getServices().values()) {
-            String name = s.getType().getName();
-            writer.write(String.format("    private static final String ID_%s = \"%s\";\r\n", name, s.getServiceId()));
-        }
         writer.write(String.format("\r\n"));
 
         writer.write(String.format("    public static %s create(Device device) {\r\n", device.getDeviceType().getName()));
