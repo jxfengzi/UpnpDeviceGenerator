@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <device>
+        <UDN>uuid:1df20822-2674-4faf-af8f-2dab93d590fa</UDN>
+        <friendlyName>OuyangDMS</friendlyName>
+        <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+        <manufacturer>Ouyang</manufacturer>
+        <manufacturerURL>http://www.ouyang.com</manufacturerURL>
+        <modelName>Media Server</modelName>
+        <modelNumber>1.0</modelNumber>
+        <modelURL>http://www.ouyang/dms</modelURL>
+        <serialNumber>{C9F44CD6-88F6-4CE8-90B2-B2139908EC8D}</serialNumber>
+        <dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">DMS-1.50</dlna:X_DLNADOC>
+        <iconList/>
+        <serviceList>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:ConnectionManager:1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:ConnectionManager</serviceId>
+                <controlURL>/ctrl/xxx</controlURL>
+                <eventSubURL>/event/xxx</eventSubURL>
+                <SCPDURL>/cms.xml</SCPDURL>
+            </service>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:ContentDirectory</serviceId>
+                <controlURL>/ctrl/xxx</controlURL>
+                <eventSubURL>/event/xxx</eventSubURL>
+                <SCPDURL>/cds.xml</SCPDURL>
+            </service>
+        </serviceList>
+    </device>
+</root>

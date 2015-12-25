@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+	<specVersion>
+		<major>1</major>
+		<minor>0</minor>
+	</specVersion>
+	<device>
+		<deviceType>urn:schemas-upnp-org:device:AVPlayer:1</deviceType>
+		<friendlyName>ouyang</friendlyName>
+		<modelNumber>12</modelNumber>
+		<modelName>AVPlayer</modelName>
+		<modelDescription>Xiaomi AVPlayer</modelDescription>
+		<manufacturer>Xiaomi Corporation</manufacturer>
+		<manufacturerURL>http://www.xiaomi.com</manufacturerURL>
+		<modelURL>http://www.mi.com/tv</modelURL>
+		<UDN></UDN>
+		<serviceList>
+			<service>
+				<serviceType>urn:schemas-upnp-org:service:RenderingControl:1</serviceType>
+				<serviceId>urn:upnp-org:serviceId:RenderingControl</serviceId>
+				<controlURL>/upnp/xxxx/ctrl/rcs</controlURL>
+				<eventSubURL>/upnp/xxx/event/rcs</eventSubURL>
+				<SCPDURL>/rcs.xml</SCPDURL>
+			</service>
+			<service>
+				<serviceType>urn:schemas-upnp-org:service:AVTransport:1</serviceType>
+				<serviceId>urn:upnp-org:serviceId:AVTransport</serviceId>
+				<controlURL>/upnp/xxxx/ctrl/avt</controlURL>
+				<eventSubURL>/upnp/xxx/event/avt</eventSubURL>
+				<SCPDURL>/avt.xml</SCPDURL>
+			</service>
+			<service>
+				<serviceType>urn:schemas-upnp-org:service:SessionManager:1</serviceType>
+				<serviceId>urn:upnp-org:serviceId:SessionManager</serviceId>
+				<controlURL>/upnp/xxxx/ctrl/sms</controlURL>
+				<eventSubURL>/upnp/xxx/event/sms</eventSubURL>
+				<SCPDURL>/sms.xml</SCPDURL>
+			</service>
+		</serviceList>
+	</device>
+</root>

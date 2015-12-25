@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="DeviceToClazz" default="help" basedir=".">
+
+    <!-- Properties and Paths -->
+    <property name="dir.java.src" value="${basedir}/src" />
+    <property name="dir.java.build" value="out.build" />
+    <property name="dir.dist" value="out.dist" />
+    <property name="dir.lib" value="out.lib" />
+    <property name="dir.deploy" value="out.deploy" />
+    <property name="file.manifest" value="manifest.txt" />
+    <property name="file.jar" value="d2c.jar" />
+ 
+    <patternset id="no.java">
+        <exclude name="**/*.java" />
+    </patternset>
+
+    <path id="project.class.path">
+        <pathelement location="${dir.java.build}"/>
+        <fileset dir="${dir.lib}" id="lib.path">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="init" depends="clean" description="initilize, create directory, copy files">
+        <mkdir dir="${dir.java.build}" />
+        <mkdir dir="${dir.java.build}/classes" />
+        <mkdir dir="${dir.dist}" />
+        <copy todir="${dir.java.build}">
+            <fileset dir="${dir.java.src}">
+                <patternset refid="no.java" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clean" description="clean up">
+        <delete dir="${dir.java.build}" />
+        <delete dir="${dir.dist}" />
+        <echo level="info">clean up</echo>
+    </target>
+
+    <target name="build" depends="init" description="compile source code">
+        <javac
+            srcdir="${dir.java.src}" 
+            destdir="${dir.java.build}/classes"
+            debug="off"
+            includeantruntime="on"> 
+            <!--classpath refid="project.class.path"/-->
+        </javac>
+    </target>
+
+    <target name="create.manifest" description="create manifest">
+        <manifest file="${dir.java.src}/${file.manifest}">
+            <attribute name="Built-By" value="${user.name}" />
+            <attribute name="Main-Class" value="test.DeviceToClazz" />
+        </manifest>
+    </target>
+
+    <target name="jar" depends="build">
+        <jar update="true" compress="true" jarfile="${dir.java.build}/device2clazz.jar">
+            <manifest>
+                <attribute name="Build-User" value="ouyang"/>
+                <attribute name="Main-class" value="test.DeviceToClazz"/>
+            </manifest>
+            <fileset dir="${dir.java.build}/classes">
+                <include name="**/*.class" />
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar" description="run DeviceToClazz">
+        <!--java classname="com.miot.ddd.Ddd2Clazz">
+            <classpath>
+                <pathelement path="${dir.java.build}/classes"/>
+            </classpath>
+        </java -->
+        <java jar="${dir.java.build}/device2clazz.jar" fork="yes" failonerror="true"/>
+    </target>
+
+    <target name="help" description="help infomation">
+        <echo level="info">help     -- show help information</echo>
+        <echo level="info">clean    -- clean up</echo>
+        <echo level="info">build    -- build source code</echo>
+        <echo level="info">jar      -- generate jar</echo>
+        <echo level="info">run      -- run ddd2clazz</echo>
+    </target>
+
+</project>
