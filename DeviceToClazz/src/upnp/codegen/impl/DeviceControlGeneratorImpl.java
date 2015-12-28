@@ -278,7 +278,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("import java.util.List;\r\n");
         builder.append("\r\n");
 
-        builder.append("import upnp.typedef.ErrorCode;\r\n");
+        builder.append("import upnp.typedef.UpnpError;\r\n");
         builder.append("import upnp.typedef.device.Argument;\r\n");
         builder.append("import upnp.typedef.device.Service;\r\n");
         builder.append("import upnp.typedef.device.PropertyChanged;\r\n");
@@ -535,17 +535,17 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
             writer.write(str);
             /**
              * public int GetCurrentConnectionInfo(int theConnectionID, final GetCurrentConnectionInfoHandler handler) {
-             *     int ret = ErrorCode.OK;
+             *     int ret = UpnpError.OK;
              * 
              *     do {
              *         ActionInfo action = ActionInfoCreator.create(service, ACTION_GetCurrentConnectionInfo);
              *         if (action == null) {
-             *             ret = ErrorCode.E_ACTION_NOT_SUPPORT;
+             *             ret = UpnpError.E_ACTION_NOT_SUPPORT;
              *             break;
              *         }
              * 
              *         if (action.setArgumentValue(PROPERTY_CurrentConnectionIDs, theConnectionID)) {
-             *             ret = ErrorCode.E_ARGUMENT_INVALID;
+             *             ret = UpnpError.E_ARGUMENT_INVALID;
              *             break;
              *         }
              * 
@@ -592,7 +592,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
             writer.write(String.format("        do {\r\n"));
             writer.write(String.format("            ActionInfo action = ActionInfoCreator.create(service, ACTION_%s);\r\n", action.getName()));
             writer.write(String.format("            if (action == null) {\r\n"));
-            writer.write(String.format("                ret = ErrorCode.E_ACTION_NOT_SUPPORT;\r\n"));
+            writer.write(String.format("                ret = UpnpError.E_ACTION_NOT_SUPPORT;\r\n"));
             writer.write(String.format("                break;\r\n"));
             writer.write(String.format("            }\r\n"));
             writer.write("\r\n");
@@ -615,7 +615,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
                     writer.write(String.format("%s.getValue(), Argument.Direction.IN)) {\r\n", arg.getName()));
                 }
 
-                writer.write("                ret = ErrorCode.E_ARGUMENT_INVALID;\r\n");
+                writer.write("                ret = UpnpError.E_ARGUMENT_INVALID;\r\n");
                 writer.write("                break;\r\n");
                 writer.write("            }\r\n");
             }
@@ -790,21 +790,21 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
 
 
         writer.write("    public int subscribe(final CompletionHandler handler, final EventListener listener) {\r\n");
-        writer.write("        int ret = ErrorCode.OK;\r\n");
+        writer.write("        int ret = UpnpError.OK;\r\n");
         writer.write("\r\n");
         writer.write("        do {\r\n");
         writer.write("            if (this.service.isSubscribed()) {\r\n");
-        writer.write("                ret = ErrorCode.E_EVENT_SUBSCRIBED;\r\n");
+        writer.write("                ret = UpnpError.E_EVENT_SUBSCRIBED;\r\n");
         writer.write("                break;\r\n");
         writer.write("            }\r\n");
         writer.write("\r\n");
         writer.write("            if (handler == null) {\r\n");
-        writer.write("                ret = ErrorCode.E_INVALID_PARAM;\r\n");
+        writer.write("                ret = UpnpError.E_INVALID_PARAM;\r\n");
         writer.write("                break;\r\n");
         writer.write("            }\r\n");
         writer.write("\r\n");
         writer.write("            if (listener == null) {\r\n");
-        writer.write("                ret = ErrorCode.E_INVALID_PARAM;\r\n");
+        writer.write("                ret = UpnpError.E_INVALID_PARAM;\r\n");
         writer.write("                break;\r\n");
         writer.write("            }\r\n");
         writer.write("\r\n");
@@ -865,16 +865,16 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         writer.write("\r\n");
         
         writer.write("    public int unsubscribe(final CompletionHandler handler) {\r\n");
-        writer.write("        int ret = ErrorCode.OK;\r\n");
+        writer.write("        int ret = UpnpError.OK;\r\n");
         writer.write("\r\n");
         writer.write("        do {\r\n");
         writer.write("            if (! this.service.isSubscribed()) {\r\n");
-        writer.write("                ret = ErrorCode.E_EVENT_SUBSCRIBED;\r\n");
+        writer.write("                ret = UpnpError.E_EVENT_SUBSCRIBED;\r\n");
         writer.write("                break;\r\n");
         writer.write("            }\r\n");
         writer.write("\r\n");
         writer.write("            if (handler == null) {\r\n");
-        writer.write("                ret = ErrorCode.E_INVALID_PARAM;\r\n");
+        writer.write("                ret = UpnpError.E_INVALID_PARAM;\r\n");
         writer.write("                break;\r\n");
         writer.write("            }\r\n");
         writer.write("\r\n");
