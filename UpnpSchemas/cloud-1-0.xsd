@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<xsd:schema 
+	attributeFormDefault="unqualified" 
+	elementFormDefault="qualified" 
+	targetNamespace="urn:schemas-upnp.org:cloud-1-0"
+	xmlns="urn:schemas-upnp.org:cloud-1-0"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:documentation xml:lang="en">
+		Date February 20, 2015
+		Note that all schema supplied by the UPnP Forum Cloud Task Force are for informational use only and that the 
+		standardized UDA describes the normative requirements for these schema. Some schema provided do not necessarily
+		embody requirements regarding number of element occurrances allowed or their ordering or specific combination. 
+		</xsd:documentation>
+	</xsd:annotation>
+	
+	<xsd:simpleType name="hashType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="uda"/>
+			<xsd:enumeration value="sha-256"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="typeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="describe"/>
+			<xsd:enumeration value="described"/>
+			<xsd:enumeration value="error"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<!--============================================================
+	In UCA 1.0 <uc> and <query> elements are not expected to occur in
+	the same UCA stanza.
+    ============================================================-->
+	<xsd:element name="uc">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="configIdCloud" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:simpleContent>
+							<xsd:extension base="xsd:string">
+								<xsd:attribute name="hash" type="hashType" use="required"/>
+								<!-- In UCA 1.0 the only expected value for the "hash"
+								     attribute is "sha-256" -->
+							</xsd:extension>
+						</xsd:simpleContent>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute type="xsd:string" name="serviceId" use="optional"/>
+			<!-- In UCA 1.0 serviceId attribute and configIdCloud element are not
+			     expected to be used in the same <uc> element -->
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="query">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+			</xsd:sequence>
+			<xsd:attribute type="xsd:string" name="type" use="required"/>
+			<!-- In UCA 1.0 the only expected values for the "type"
+				attribute is "describe", "described", and "error" 
+				and only in specific scenarios -->
+			<xsd:attribute type="xsd:string" name="name" use="required"/>
+			<!-- In UCA 1.0 the expected value for the "name"
+				attribute is the USN -->
+        </xsd:complexType>
+	</xsd:element>	
+
+</xsd:schema>
