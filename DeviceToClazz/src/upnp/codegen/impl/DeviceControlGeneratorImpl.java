@@ -278,12 +278,13 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("import java.util.List;\r\n");
         builder.append("\r\n");
 
-        builder.append("import upnp.typedef.UpnpError;\r\n");
+        builder.append("import upnp.typedef.error.UpnpError;\r\n");
         builder.append("import upnp.typedef.device.Argument;\r\n");
         builder.append("import upnp.typedef.device.Service;\r\n");
         builder.append("import upnp.typedef.device.PropertyChanged;\r\n");
         builder.append("import upnp.typedef.device.invocation.ActionInfo;\r\n");
         builder.append("import upnp.typedef.device.invocation.ActionInfoCreator;\r\n");
+        builder.append("import upnp.typedef.exception.UpnpException;\r\n");
         builder.append("import upnp.typedef.property.DataType;\r\n");
         builder.append("import upnp.typedef.property.Property;\r\n");
         builder.append("import upnp.typedef.property.PropertyDefinition;\r\n");
@@ -527,44 +528,36 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
             }
             builder.append(String.format(");\r\n"));
 
-            builder.append(String.format("        void onFailed(int errCode, String description);\r\n"));
+            builder.append(String.format("        void onFailed(UpnpError error);\r\n"));
             builder.append(String.format("    }\r\n"));
             builder.append(String.format("\r\n"));
             
             String str = builder.toString();
             writer.write(str);
             /**
-             * public int GetCurrentConnectionInfo(int theConnectionID, final GetCurrentConnectionInfoHandler handler) {
-             *     int ret = UpnpError.OK;
+             * public void GetCurrentConnectionInfo(int theConnectionID, final GetCurrentConnectionInfoHandler handler) throws UpnpException {
+             *     ActionInfo action = ActionInfoCreator.create(service, ACTION_GetCurrentConnectionInfo);
+             *     if (action == null) {
+             *         throw new UpnpException(UpnpError.INVALID_OPERATION, "action not found"); 
+             *     }
              * 
-             *     do {
-             *         ActionInfo action = ActionInfoCreator.create(service, ACTION_GetCurrentConnectionInfo);
-             *         if (action == null) {
-             *             ret = UpnpError.E_ACTION_NOT_SUPPORT;
-             *             break;
+             *     if (action.setArgumentValue(PROPERTY_CurrentConnectionIDs, theConnectionID)) {
+             *         throw new UpnpException(UpnpError.INVALID_ARGUMENT);
+             *     }
+             * 
+             *     UpnpManager.getUpnp().invoke(invocation, new Manipulator.InvokeCompletionHandler() {
+             *         @Override
+             *         public void onSucceed(ActionInfo invocation) {
              *         }
-             * 
-             *         if (action.setArgumentValue(PROPERTY_CurrentConnectionIDs, theConnectionID)) {
-             *             ret = UpnpError.E_ARGUMENT_INVALID;
-             *             break;
-             *         }
-             * 
-             *         ret = CtrlPointManager.getManipulator().invoke(invocation, new Manipulator.InvokeCompletionHandler() {
-             *             @Override
-             *             public void onSucceed(ActionInfo invocation) {
-             *             }
              *
-             *             @Override
-             *             public void onFailed(int errCode, String description) {
-             *                  handler.onFailed(errCode, description);
-             *             }
-             *         });
-             *     } while (false);
-             * 
-             *     return ret;
+             *         @Override
+             *         public void onFailed(int errCode, String description) {
+             *              handler.onFailed(error);
+             *         }
+             *     });
              * }
              */
-            writer.write(String.format("    public int %s(", actionName));
+            writer.write(String.format("    public void %s(", actionName));
 
             size = action.getArguments().size();
             for (Argument arg : action.getArguments()) {
@@ -586,15 +579,11 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
                 writer.write(", ");
             }
 
-            writer.write(String.format("final %s handler) {\r\n", handlerName));
-            writer.write(String.format("        int ret = 0;\r\n"));
-            writer.write("\r\n");
-            writer.write(String.format("        do {\r\n"));
-            writer.write(String.format("            ActionInfo action = ActionInfoCreator.create(service, ACTION_%s);\r\n", action.getName()));
-            writer.write(String.format("            if (action == null) {\r\n"));
-            writer.write(String.format("                ret = UpnpError.E_ACTION_NOT_SUPPORT;\r\n"));
-            writer.write(String.format("                break;\r\n"));
-            writer.write(String.format("            }\r\n"));
+            writer.write(String.format("final %s handler) throws UpnpException {\r\n", handlerName));
+            writer.write(String.format("        ActionInfo action = ActionInfoCreator.create(service, ACTION_%s);\r\n", action.getName()));
+            writer.write(String.format("        if (action == null) {\r\n"));
+            writer.write(String.format("            throw new UpnpException(UpnpError.INVALID_OPERATION, \"action not found\");\r\n"));
+            writer.write(String.format("        }\r\n"));
             writer.write("\r\n");
 
             for (Argument arg : action.getArguments()) {
@@ -608,23 +597,22 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
                     break;
                 }
 
-                writer.write(String.format("            if (!action.setArgumentValue(_%s_ARG_%s, ", action.getName(), arg.getName()));
+                writer.write(String.format("        if (!action.setArgumentValue(_%s_ARG_%s, ", action.getName(), arg.getName()));
                 if (p.getAllowedValueList() == null) {
                     writer.write(String.format("%s, Argument.Direction.IN)) {\r\n", arg.getName()));
                 } else {
                     writer.write(String.format("%s.getValue(), Argument.Direction.IN)) {\r\n", arg.getName()));
                 }
 
-                writer.write("                ret = UpnpError.E_ARGUMENT_INVALID;\r\n");
-                writer.write("                break;\r\n");
-                writer.write("            }\r\n");
+                writer.write("            throw new UpnpException(UpnpError.INVALID_ARGUMENT);\r\n");
+                writer.write("        }\r\n");
+                writer.write("\r\n");
             }
-            writer.write("\r\n");
 
-            writer.write("            ret = UpnpManager.getUpnp().invoke(action, new MyInvokeCompletionHandler() {\r\n");
+            writer.write("        UpnpManager.getUpnp().invoke(action, new MyInvokeCompletionHandler() {\r\n");
             writer.write("\r\n");
-            writer.write("                @Override\r\n");
-            writer.write("                public void onSucceed(ActionInfo invocation) {\r\n");
+            writer.write("            @Override\r\n");
+            writer.write("            public void onSucceed(ActionInfo invocation) {\r\n");
 
             int outCount = 0;
             for (Argument arg : action.getArguments()) {
@@ -636,10 +624,10 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
             }
 
             if (outCount == 0) {
-                writer.write("                    handler.onSucceed();\r\n");
+                writer.write("                handler.onSucceed();\r\n");
             }
             else {
-                writer.write("                    do {\r\n");
+                writer.write("                do {\r\n");
                 for (Argument arg : action.getArguments()) {
                     if (arg.getDirection() != Argument.Direction.OUT) {
                         continue;
@@ -651,17 +639,17 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
                         break;
                     }
 
-                    writer.write(String.format("                        Property p%s = invocation.getResult(_%s_ARG_%s);\r\n",
+                    writer.write(String.format("                    Property p%s = invocation.getResult(_%s_ARG_%s);\r\n",
                             arg.getName(),
                             action.getName(),
                             arg.getName()));
 
-                    writer.write(String.format("                        if (p%s == null) {\r\n", arg.getName()));
-                    writer.write(String.format("                            Log.d(TAG, String.format(\"%%s not found\", _%s_ARG_%s));\r\n",
+                    writer.write(String.format("                    if (p%s == null) {\r\n", arg.getName()));
+                    writer.write(String.format("                        Log.d(TAG, String.format(\"%%s not found\", _%s_ARG_%s));\r\n",
                             action.getName(),
                             arg.getName()));
-                    writer.write("                            break;\r\n");
-                    writer.write("                        }\r\n");
+                    writer.write("                        break;\r\n");
+                    writer.write("                    }\r\n");
                     writer.write("\r\n");
                 }
 
@@ -682,14 +670,14 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
                     result[i++] = name;
 
                     if (p.getAllowedValueType() == AllowedValueType.LIST) {
-                        writer.write(String.format("                        %s the%s = %s.retrieveType(p%s.getCurrentValue().toString());\r\n",
+                        writer.write(String.format("                    %s the%s = %s.retrieveType(p%s.getCurrentValue().toString());\r\n",
                                 p.getName(),
                                 arg.getName(),
                                 p.getName(),
                                 arg.getName()));
                     }
                     else {
-                        writer.write(String.format("                        %s the%s = (%s) p%s.getCurrentValue();\r\n",
+                        writer.write(String.format("                    %s the%s = (%s) p%s.getCurrentValue();\r\n",
                                 p.getDataType().getJavaDataType().getSimpleName(),
                                 arg.getName(),
                                 p.getDataType().getJavaDataType().getSimpleName(),
@@ -698,13 +686,13 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
                 }
                 writer.write("\r\n");
 
-                writer.write("                        handler.onSucceed(");
+                writer.write("                    handler.onSucceed(");
                 for (i = 0; i < outCount; ++i) {
                     if (i == 0) {
                         writer.write(String.format("%s", result[i]));
                     }
                     else {
-                        writer.write(String.format("                                %s", result[i]));
+                        writer.write(String.format("                            %s", result[i]));
                     }
 
                     if (i != (outCount - 1)) {
@@ -712,20 +700,16 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
                     }
                 }
                 writer.write(");\r\n");
-                writer.write("                    } while (false);\r\n");
+                writer.write("                } while (false);\r\n");
             }
-            writer.write("                }\r\n");
+            writer.write("            }\r\n");
 
             writer.write("\r\n");
-            writer.write("                @Override\r\n");
-            writer.write("                public void onFailed(final int errCode, final String description) {\r\n");
-            writer.write("                    handler.onFailed(errCode, description);\r\n");
-            writer.write("                }\r\n");
-            writer.write("            });\r\n");
-            writer.write("\r\n");
-            writer.write("        } while (false);\r\n");
-            writer.write("\r\n");
-            writer.write("        return ret;\r\n");
+            writer.write("            @Override\r\n");
+            writer.write("            public void onFailed(UpnpError error) {\r\n");
+            writer.write("                handler.onFailed(error);\r\n");
+            writer.write("            }\r\n");
+            writer.write("        });\r\n");
             writer.write("    }\r\n");
             writer.write("\r\n");
         }
@@ -752,12 +736,12 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         /**
          * public interface CompletionHandler {
          *     void onSucceed();
-         *     void onFailed(int errCode, String description);
+         *     void onFailed(UpnpError error);
          * }
          */
         writer.write("    public interface CompletionHandler {\r\n");
         writer.write("        void onSucceed();\r\n");
-        writer.write("        void onFailed(int errCode, String description);\r\n");
+        writer.write("        void onFailed(UpnpError error);\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
         
@@ -789,56 +773,50 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         writer.write("\r\n");
 
 
-        writer.write("    public int subscribe(final CompletionHandler handler, final EventListener listener) {\r\n");
-        writer.write("        int ret = UpnpError.OK;\r\n");
+        writer.write("    public void subscribe(final CompletionHandler handler, final EventListener listener) throws UpnpException {\r\n");
+        writer.write("        if (this.service.isSubscribed()) {\r\n");
+        writer.write("            throw new UpnpException(UpnpError.SERVICE_SUBSCRIBED);\r\n");
+        writer.write("        }\r\n");
         writer.write("\r\n");
-        writer.write("        do {\r\n");
-        writer.write("            if (this.service.isSubscribed()) {\r\n");
-        writer.write("                ret = UpnpError.E_EVENT_SUBSCRIBED;\r\n");
-        writer.write("                break;\r\n");
-        writer.write("            }\r\n");
+        writer.write("        if (handler == null) {\r\n");
+        writer.write("            throw new UpnpException(UpnpError.INVALID_ARGUMENT);\r\n");
+        writer.write("        }\r\n");
         writer.write("\r\n");
-        writer.write("            if (handler == null) {\r\n");
-        writer.write("                ret = UpnpError.E_INVALID_PARAM;\r\n");
-        writer.write("                break;\r\n");
-        writer.write("            }\r\n");
-        writer.write("\r\n");
-        writer.write("            if (listener == null) {\r\n");
-        writer.write("                ret = UpnpError.E_INVALID_PARAM;\r\n");
-        writer.write("                break;\r\n");
-        writer.write("            }\r\n");
+        writer.write("        if (listener == null) {\r\n");
+        writer.write("            throw new UpnpException(UpnpError.INVALID_ARGUMENT);\r\n");
+        writer.write("        }\r\n");
         writer.write("\r\n");
         writer.write("\r\n");
-        writer.write("            ret = UpnpManager.getUpnp().subscribe(this.service,\r\n");
-        writer.write("                    new MyCompletionHandler() {\r\n");
+        writer.write("        UpnpManager.getUpnp().subscribe(this.service,\r\n");
+        writer.write("            new MyCompletionHandler() {\r\n");
         writer.write("\r\n");
-        writer.write("                        @Override\r\n");
-        writer.write("                        public void onSucceed() {\r\n");
-        writer.write("                            handler.onSucceed();\r\n");
-        writer.write("                        }\r\n");
+        writer.write("                 @Override\r\n");
+        writer.write("                public void onSucceed() {\r\n");
+        writer.write("                    handler.onSucceed();\r\n");
+        writer.write("                }\r\n");
         writer.write("\r\n");
-        writer.write("                        @Override\r\n");
-        writer.write("                        public void onFailed(int errCode, String description) {\r\n");
-        writer.write("                            handler.onFailed(errCode, description);\r\n");
-        writer.write("                        }\r\n");
-        writer.write("                    },\r\n");
-        writer.write("                    new MyEventListener() {\r\n");
-        writer.write("                        @Override\r\n");
-        writer.write("                        public void onSubscriptionExpired(String serviceId) {\r\n");
-        writer.write("                            listener.onSubscriptionExpired();\r\n");
-        writer.write("                        }\r\n");
+        writer.write("                @Override\r\n");
+        writer.write("                public void onFailed(UpnpError error) {\r\n");
+        writer.write("                    handler.onFailed(error);\r\n");
+        writer.write("                }\r\n");
+        writer.write("            },\r\n");
+        writer.write("            new MyEventListener() {\r\n");
+        writer.write("                @Override\r\n");
+        writer.write("                public void onSubscriptionExpired(String serviceId) {\r\n");
+        writer.write("                    listener.onSubscriptionExpired();\r\n");
+        writer.write("                }\r\n");
         writer.write("\r\n");
-        writer.write("                        @Override\r\n");
-        writer.write("                        public void onEvent(String serviceId, List<PropertyChanged> list) {\r\n");
+        writer.write("                @Override\r\n");
+        writer.write("                public void onEvent(String serviceId, List<PropertyChanged> list) {\r\n");
 
-        writer.write("                            for (PropertyChanged c : list) {\r\n");
+        writer.write("                    for (PropertyChanged c : list) {\r\n");
         
         for (Property p : s.getProperties()) {
             PropertyDefinition def = p.getDefinition();
             if (def.isSendEvents()) {
-                writer.write(String.format("                                if (c.getName().equals(PROPERTY_%s)) {\r\n", def.getName()));
-                writer.write(String.format("                                    PropertyDefinition def = service.getPropertyDefinition(PROPERTY_%s);\r\n", def.getName()));
-                writer.write(String.format("                                    listener.on%sChanged(", def.getName()));
+                writer.write(String.format("                        if (c.getName().equals(PROPERTY_%s)) {\r\n", def.getName()));
+                writer.write(String.format("                            PropertyDefinition def = service.getPropertyDefinition(PROPERTY_%s);\r\n", def.getName()));
+                writer.write(String.format("                            listener.on%sChanged(", def.getName()));
                 
                 if (def.getAllowedValueType() == AllowedValueType.LIST) {
                     writer.write(String.format("%s.retrieveType((%s)def.getDataType().toObjectValue(c.getValue()))",
@@ -851,49 +829,38 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
                 }
                 
                 writer.write(");\r\n");
-                writer.write("                                }\r\n");
+                writer.write("                        }\r\n");
             }
         }
 
-        writer.write("                            }\r\n");
-        writer.write("                        }\r\n");
-        writer.write("                    });\r\n");
-        writer.write("        } while (false);\r\n");
-        writer.write("\r\n");
-        writer.write("        return ret;\r\n");
+        writer.write("                    }\r\n");
+        writer.write("                }\r\n");
+        writer.write("            });\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
         
-        writer.write("    public int unsubscribe(final CompletionHandler handler) {\r\n");
-        writer.write("        int ret = UpnpError.OK;\r\n");
+        writer.write("    public void unsubscribe(final CompletionHandler handler) throws UpnpException {\r\n");
+        writer.write("        if (! this.service.isSubscribed()) {\r\n");
+        writer.write("            throw new UpnpException(UpnpError.SERVICE_UNSUBSCRIBED);\r\n");
+        writer.write("        }\r\n");
         writer.write("\r\n");
-        writer.write("        do {\r\n");
-        writer.write("            if (! this.service.isSubscribed()) {\r\n");
-        writer.write("                ret = UpnpError.E_EVENT_SUBSCRIBED;\r\n");
-        writer.write("                break;\r\n");
-        writer.write("            }\r\n");
+        writer.write("        if (handler == null) {\r\n");
+        writer.write("            throw new UpnpException(UpnpError.INVALID_ARGUMENT);\r\n");
+        writer.write("        }\r\n");
         writer.write("\r\n");
-        writer.write("            if (handler == null) {\r\n");
-        writer.write("                ret = UpnpError.E_INVALID_PARAM;\r\n");
-        writer.write("                break;\r\n");
-        writer.write("            }\r\n");
+        writer.write("        UpnpManager.getUpnp().unsubscribe(this.service,\r\n");
+        writer.write("            new MyCompletionHandler() {");
         writer.write("\r\n");
-        writer.write("            ret = UpnpManager.getUpnp().unsubscribe(this.service,\r\n");
-        writer.write("                    new MyCompletionHandler() {");
+        writer.write("                @Override\r\n");
+        writer.write("                public void onSucceed() {\r\n");
+        writer.write("                    handler.onSucceed();\r\n");
+        writer.write("                }\r\n");
         writer.write("\r\n");
-        writer.write("                        @Override\r\n");
-        writer.write("                        public void onSucceed() {\r\n");
-        writer.write("                            handler.onSucceed();\r\n");
-        writer.write("                        }\r\n");
-        writer.write("\r\n");
-        writer.write("                        @Override\r\n");
-        writer.write("                        public void onFailed(int errCode, String description) {\r\n");
-        writer.write("                            handler.onFailed(errCode, description);\r\n");
-        writer.write("                        }\r\n");
-        writer.write("                    });\r\n");
-        writer.write("        } while (false);\r\n");
-        writer.write("\r\n");
-        writer.write("        return ret;\r\n");
+        writer.write("                @Override\r\n");
+        writer.write("                public void onFailed(UpnpError error) {\r\n");
+        writer.write("                    handler.onFailed(error);\r\n");
+        writer.write("                }\r\n");
+        writer.write("            });\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
     }

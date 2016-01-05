@@ -137,44 +137,28 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("\r\n");
 
         /**
-         * public void start() {
-         *     try {
-         *         RegistryManager.getRegistry().register(device, this);
-         *     } catch (UpnpException e) {
-         *         e.printStackTrace();
-         *     }
+         * public void start(MyCompletionHandler handler) throws UpnpException {
+         *     UpnpManager.getUpnp().register(_device, handler, this);
          * }
          */
-        writer.write("    public void start(MyCompletionHandler handler) {\r\n");
-        writer.write("        try {\r\n");
-        writer.write("            UpnpManager.getUpnp().register(_device, handler, this);\r\n");
-        writer.write("        } catch (UpnpException e) {\r\n");
-        writer.write("            e.printStackTrace();\r\n");
-        writer.write("        }\r\n");
+        writer.write("    public void start(MyCompletionHandler handler) throws UpnpException {\r\n");
+        writer.write("        UpnpManager.getUpnp().register(_device, handler, this);\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
 
         /**
-         * public void stop() {
-         *     try {
-         *         RegistryManager.getRegistry().unregister(device);
-         *     } catch (UpnpException e) {
-         *         e.printStackTrace();
-         *     }
+         * public void stop(MyCompletionHandler handler) throws UpnpException {
+         *     UpnpManager.getUpnp().unregister(_device, handler);
          * }
          */
-        writer.write("    public void stop(MyCompletionHandler handler) {\r\n");
-        writer.write("        try {\r\n");
-        writer.write("            UpnpManager.getUpnp().unregister(_device, handler);\r\n");
-        writer.write("        } catch (UpnpException e) {\r\n");
-        writer.write("            e.printStackTrace();\r\n");
-        writer.write("        }\r\n");
+        writer.write("    public void stop(MyCompletionHandler handler) throws UpnpException {\r\n");
+        writer.write("        UpnpManager.getUpnp().unregister(_device, handler);\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
 
         /**
          * @Override
-         * public int onAction(ActionInfo info) {
+         * public UpnpError onAction(ActionInfo info) {
          *     ServiceStub handler = _services.get(info.getServiceId());
          *     if (handler == null) {
          *         Log.e(TAG, "service not found: " + info.getServiceId());
@@ -185,11 +169,11 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
          * }
          */
         writer.write("    @Override\r\n");
-        writer.write("    public int onAction(ActionInfo info) {\r\n");
+        writer.write("    public UpnpError onAction(ActionInfo info) {\r\n");
         writer.write("        ServiceStub handler = _services.get(info.getServiceId());\r\n");
         writer.write("        if (handler == null) {\r\n");
         writer.write("            Log.e(TAG, \"service not found: \" + info.getServiceId());\r\n");
-        writer.write("            return UpnpError.E_INTERNAL_ERROR;\r\n");
+        writer.write("            return UpnpError.UPNP_INTERNAL_ERROR;\r\n");
         writer.write("        }\r\n");
         writer.write("\r\n");
         writer.write("        return handler.onAction(info);\r\n");
@@ -229,7 +213,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("import java.util.Map;\r\n");
         builder.append("\r\n");
 
-        builder.append("import upnp.typedef.UpnpError;\r\n");
+        builder.append("import upnp.typedef.error.UpnpError;\r\n");
         builder.append("import upnp.typedef.device.Device;\r\n");
         builder.append("import upnp.typedef.device.invocation.ActionInfo;\r\n");
         builder.append("import upnp.typedef.exception.UpnpException;\r\n");
@@ -283,7 +267,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("import android.util.Log;\r\n");
         builder.append("\r\n");
 
-        builder.append("import upnp.typedef.UpnpError;\r\n");
+        builder.append("import upnp.typedef.error.UpnpError;\r\n");
         builder.append("import upnp.typedef.device.Argument;\r\n");
         builder.append("import upnp.typedef.device.Service;\r\n");
         builder.append("import upnp.typedef.device.invocation.ActionInfo;\r\n");
@@ -519,14 +503,14 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
 
         /**
          *   public interface Handler {
-         *       int onNext(Long InstanceID);
-         *       int onGetTransportInfo(Long theInstanceID, GetTransportInfo_Result result);
+         *       UpnpError onNext(Long InstanceID);
+         *       UpnpError onGetTransportInfo(Long theInstanceID, GetTransportInfo_Result result);
          *       ...
          *   }
          */
         writer.write("    public interface Handler {\r\n");
         for (Action action : s.getActions().values()) {
-            writer.write(String.format("        int on%s(", action.getName()));
+            writer.write(String.format("        UpnpError on%s(", action.getName()));
 
             int argumnetCount = 0;
             int resultCount = 0;
@@ -577,23 +561,27 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("\r\n");
         
         /**
-         * private int handle_GetTransportInfo(ActionInfo info) {
+         * private UpnpError handle_GetTransportInfo(ActionInfo info) {
          *     Long theInstanceID = (Long)info.getArgumentValue(_GetTransportInfo_ARG_InstanceID);
          *     GetTransportInfo_Result result = new GetTransportInfo_Result();
-         *     int error = _handler.onGetTransportInfo(theInstanceID, result);
-         *     if (error == UpnpError.OK) {
-         *          if (! info.setArgumentValue(_GetTransportInfo_ARG_CurrentTransportState, result.theCurrentTransportState, Argument.Direction.OUT)) {
-         *              Log.d(TAG, "setArgumentValue: false");
-         *              return false;
-         *          }
+         *     
+         *     UpnpError error = _handler.onGetTransportInfo(theInstanceID, result);
+         *     if (! error.equals(UpnpError.OK)) {
+         *         return error;
+         *     }
+         *          
+         *     if (! info.setArgumentValue(_GetTransportInfo_ARG_CurrentTransportState, result.theCurrentTransportState, Argument.Direction.OUT)) {
+         *         Log.d(TAG, "setArgumentValue: false");
+         *         return UpnpError.UPNP_ARGUMENT_VALUE_INVALID;
          *     }
          *     ...
-         *     return error;
+         *     
+         *     return UpnpError.OK;
          * }
          */
         for (Action action : s.getActions().values()) {
             String actionName = action.getName();
-            writer.write(String.format("    private int handle_%s(ActionInfo info) {\r\n", actionName));
+            writer.write(String.format("    private UpnpError handle_%s(ActionInfo info) {\r\n", actionName));
 
             int argumnetCount = 0;
             int resultCount = 0;
@@ -624,7 +612,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
 
             writer.write("\r\n");
 
-            writer.write(String.format("        int error = _handler.on%s(", actionName));
+            writer.write(String.format("        UpnpError error = _handler.on%s(", actionName));
             int index = 0;
             for (Argument arg : action.getArguments()) {
                 if (arg.getDirection() == Argument.Direction.IN) {
@@ -657,40 +645,39 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
             }
             writer.write(");\r\n");
 
-            if (resultCount > 0) {
-                writer.write(String.format("        if (error == UpnpError.OK) {\r\n", actionName));
-                for (Argument arg : action.getArguments()) {
-                    if (arg.getDirection() != Argument.Direction.OUT) {
-                        continue;
-                    }
-                    String actionArgName = String.format("_%s_ARG_%s", actionName, arg.getName());
-                    String resultArgName = String.format("the%s", arg.getName());
-
-                    PropertyDefinition p = s.getPropertyDefinition(arg.getRelatedProperty());
-                    if (p == null) {
-                        Log.d(TAG, String.format("RelatedProperty not found: %s", arg.getRelatedProperty()));
-                        break;
-                    }
-
-                    String resultValue;
-                    if (p.getAllowedValueType() == AllowedValueType.LIST) {
-                        resultValue = String.format("result.%s.getValue()", resultArgName);
-                    } else {
-                        resultValue = String.format("result.%s", resultArgName);
-                    }
-
-                    writer.write(String.format("            if (! info.setArgumentValue(%s, %s, Argument.Direction.OUT)) {\r\n", actionArgName, resultValue));
-                    writer.write(String.format("                Log.d(TAG, \"setArgumentValue: false\");\r\n"));
-                    writer.write(String.format("                return UpnpError.E_ARGUMENT_VALUE_INVALID;\r\n"));
-                    writer.write(String.format("            }\r\n"));
-                    writer.write("\r\n");
-                }
-                
-                writer.write("        }\r\n");
-            }
-            
+            writer.write(String.format("        if (! error.equals(UpnpError.OK)) {\r\n", actionName));
+            writer.write("            return error;\r\n");
+            writer.write("        }\r\n");
             writer.write("\r\n");
-            writer.write("        return error;\r\n");
+
+            for (Argument arg : action.getArguments()) {
+                if (arg.getDirection() != Argument.Direction.OUT) {
+                    continue;
+                }
+                String actionArgName = String.format("_%s_ARG_%s", actionName, arg.getName());
+                String resultArgName = String.format("the%s", arg.getName());
+
+                PropertyDefinition p = s.getPropertyDefinition(arg.getRelatedProperty());
+                if (p == null) {
+                    Log.d(TAG, String.format("RelatedProperty not found: %s", arg.getRelatedProperty()));
+                    break;
+                }
+
+                String resultValue;
+                if (p.getAllowedValueType() == AllowedValueType.LIST) {
+                    resultValue = String.format("result.%s.getValue()", resultArgName);
+                } else {
+                    resultValue = String.format("result.%s", resultArgName);
+                }
+
+                writer.write(String.format("        if (! info.setArgumentValue(%s, %s, Argument.Direction.OUT)) {\r\n", actionArgName, resultValue));
+                writer.write(String.format("            Log.d(TAG, \"setArgumentValue: false\");\r\n"));
+                writer.write(String.format("            return UpnpError.UPNP_ARGUMENT_VALUE_INVALID;\r\n"));
+                writer.write(String.format("        }\r\n"));
+                writer.write("\r\n");
+            }
+
+            writer.write("        return UpnpError.OK;\r\n");
             writer.write("    }\r\n");
             writer.write("\r\n");
         }
@@ -737,7 +724,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
 
         /**
          * @Override
-         * public int onAction(ActionInfo info) {
+         * public UpnpError onAction(ActionInfo info) {
          *    if (_handler == null) {
          *       Log.e(TAG, "handler is null");
          *       return UpnpError.E_ACTION_NOT_IMPLEMENTED;
@@ -752,10 +739,10 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
          * }
          */
         writer.write("    @Override\r\n");
-        writer.write("    public int onAction(ActionInfo info) {\r\n");
+        writer.write("    public UpnpError onAction(ActionInfo info) {\r\n");
         writer.write("        if (_handler == null) {\r\n");
         writer.write("           Log.e(TAG, \"handler is null\");\r\n");
-        writer.write("           return UpnpError.E_ACTION_NOT_IMPLEMENTED;\r\n");
+        writer.write("           return UpnpError.UPNP_ACTION_NOT_IMPLEMENTED;\r\n");
         writer.write("        }\r\n");
         writer.write("\r\n");
         for (Action action : s.getActions().values()) {
@@ -765,7 +752,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
             writer.write("        }\r\n");
             writer.write("\r\n");        
         }
-        writer.write("        return UpnpError.E_ACTION_NOT_IMPLEMENTED;\r\n");
+        writer.write("        return UpnpError.UPNP_ACTION_NOT_IMPLEMENTED;\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
 

@@ -117,22 +117,22 @@
         </action>
     </actionList>
     <serviceStateTable>
-        <stateVariable sendEvents="yes">
+        <stateVariable sendEvents="1">
             <name>LastChange</name>
             <dataType>string</dataType>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>PresetNameList</name>
             <dataType>string</dataType>
             <allowedValueList>
                 <allowedValue>FactoryDefaults</allowedValue>
             </allowedValueList>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>Mute</name>
             <dataType>boolean</dataType>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>Volume</name>
             <dataType>ui2</dataType>
             <allowedValueRange>
@@ -141,18 +141,18 @@
                 <step>1</step>
             </allowedValueRange>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>A_ARG_TYPE_Channel</name>
             <dataType>string</dataType>
             <allowedValueList>
                 <allowedValue>Master</allowedValue>
             </allowedValueList>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>A_ARG_TYPE_InstanceID</name>
             <dataType>ui4</dataType>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>A_ARG_TYPE_PresetName</name>
             <dataType>string</dataType>
             <allowedValueList>

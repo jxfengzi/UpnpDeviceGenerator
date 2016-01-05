@@ -117,19 +117,19 @@
         </action>
     </actionList>
     <serviceStateTable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>SourceCapabilityInfo</name>
             <dataType>string</dataType>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>SinkCapabilityInfo</name>
             <dataType>string</dataType>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>CurrentSessionIDs</name>
             <dataType>string</dataType>
         </stateVariable>
-        <stateVariable sendEvents="yes">
+        <stateVariable sendEvents="0">
             <name>A_ARG_TYPE_SessionStatus</name>
             <dataType>string</dataType>
             <allowedValueList>
@@ -137,11 +137,10 @@
                 <allowedValue>ContentFormatMismatch</allowedValue>
                 <allowedValue>InsufficientBandwidth</allowedValue>
                 <allowedValue>UnreliableChannel</allowedValue>
-                <allowedValue>Destroy</allowedValue>
                 <allowedValue>Unknown</allowedValue>
             </allowedValueList>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>A_ARG_TYPE_Direction</name>
             <dataType>string</dataType>
             <allowedValueList>
@@ -149,19 +148,19 @@
                 <allowedValue>Output</allowedValue>
             </allowedValueList>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>A_ARG_TYPE_CapabilityInfo</name>
             <dataType>string</dataType>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>A_ARG_TYPE_SessionID</name>
             <dataType>string</dataType>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>A_ARG_TYPE_InstanceIDs</name>
             <dataType>string</dataType>
         </stateVariable>
-        <stateVariable sendEvents="no">
+        <stateVariable sendEvents="0">
             <name>A_ARG_TYPE_Address</name>
             <dataType>string</dataType>
         </stateVariable>
