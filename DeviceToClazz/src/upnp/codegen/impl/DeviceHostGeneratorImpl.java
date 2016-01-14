@@ -138,21 +138,21 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
 
         /**
          * public void start(MyCompletionHandler handler) throws UpnpException {
-         *     UpnpManager.getUpnp().register(_device, handler, this);
+         *     UpnpManager.getHost().register(_device, handler, this);
          * }
          */
         writer.write("    public void start(MyCompletionHandler handler) throws UpnpException {\r\n");
-        writer.write("        UpnpManager.getUpnp().register(_device, handler, this);\r\n");
+        writer.write("        UpnpManager.getHost().register(_device, handler, this);\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
 
         /**
          * public void stop(MyCompletionHandler handler) throws UpnpException {
-         *     UpnpManager.getUpnp().unregister(_device, handler);
+         *     UpnpManager.getHost().unregister(_device, handler);
          * }
          */
         writer.write("    public void stop(MyCompletionHandler handler) throws UpnpException {\r\n");
-        writer.write("        UpnpManager.getUpnp().unregister(_device, handler);\r\n");
+        writer.write("        UpnpManager.getHost().unregister(_device, handler);\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
 
@@ -219,11 +219,11 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("import upnp.typedef.exception.UpnpException;\r\n");
         builder.append("\r\n");
 
-        builder.append("import upnps.api.manager.UpnpManager;\r\n");
-        builder.append("import upnps.api.manager.handler.MyActionHandler;\r\n");
-        builder.append("import upnps.api.manager.handler.MyCompletionHandler;\r\n");
-        builder.append("import upnps.api.manager.host.config.DeviceConfig;\r\n");
-        builder.append("import upnps.api.manager.host.ServiceStub;\r\n");
+        builder.append("import upnps.manager.UpnpManager;\r\n");
+        builder.append("import upnps.manager.handler.MyActionHandler;\r\n");
+        builder.append("import upnps.manager.handler.MyCompletionHandler;\r\n");
+        builder.append("import upnps.manager.host.config.DeviceConfig;\r\n");
+        builder.append("import upnps.manager.host.ServiceStub;\r\n");
 
 //        for (Service s : device.getServices().values()) {
 //            builder.append(String.format("import %s.%s;\r\n", pkgName, s.getType().getName()));
@@ -277,8 +277,8 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("import upnp.typedef.exception.UpnpException;\r\n");
         builder.append("\r\n");
 
-        builder.append("import upnps.api.manager.UpnpManager;\r\n");
-        builder.append("import upnps.api.manager.host.ServiceStub;\r\n");
+        builder.append("import upnps.manager.UpnpManager;\r\n");
+        builder.append("import upnps.manager.host.ServiceStub;\r\n");
 
         builder.append("\r\n");
 
@@ -761,7 +761,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
          *    EventInfo info = EventInfoCreator.create(_service);
          * 
          *    try {
-         *        UpnpManager.getUpnp().sendEvents(info);
+         *        UpnpManager.getHost().sendEvents(info);
          *    } catch (UpnpException e) {
          *        e.printStackTrace();
          *    }
@@ -771,7 +771,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("        EventInfo info = EventInfoCreator.create(_service);\r\n");
         writer.write("\r\n");
         writer.write("        try {\r\n");
-        writer.write("            UpnpManager.getUpnp().sendEvents(info);\r\n");
+        writer.write("            UpnpManager.getHost().sendEvents(info);\r\n");
         writer.write("        } catch (UpnpException e) {\r\n");
         writer.write("            e.printStackTrace();\r\n");
         writer.write("        }\r\n");

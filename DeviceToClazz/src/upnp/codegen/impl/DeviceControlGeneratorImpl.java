@@ -230,7 +230,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("import android.util.Log;\r\n");
         builder.append("\r\n");
         
-        builder.append("import upnps.api.manager.ctrlpoint.device.AbstractDevice;\r\n");
+        builder.append("import upnps.manager.ctrlpoint.device.AbstractDevice;\r\n");
         
 //        for (Service s : device.getServices().values()) {
 //            builder.append(String.format("import jing.api.device.dlna.service.%s;\r\n", s.getType().getName()));
@@ -290,11 +290,11 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("import upnp.typedef.property.PropertyDefinition;\r\n");
         builder.append("\r\n");
         
-        builder.append("import upnps.api.manager.UpnpManager;\r\n");
-        builder.append("import upnps.api.manager.ctrlpoint.device.AbstractService;\r\n");
-        builder.append("import upnps.api.manager.handler.MyCompletionHandler;\r\n");
-        builder.append("import upnps.api.manager.handler.MyEventListener;\r\n");
-        builder.append("import upnps.api.manager.handler.MyInvokeCompletionHandler;\r\n");
+        builder.append("import upnps.manager.UpnpManager;\r\n");
+        builder.append("import upnps.manager.ctrlpoint.device.AbstractService;\r\n");
+        builder.append("import upnps.manager.handler.MyCompletionHandler;\r\n");
+        builder.append("import upnps.manager.handler.MyEventListener;\r\n");
+        builder.append("import upnps.manager.handler.MyInvokeCompletionHandler;\r\n");
 
         builder.append("\r\n");
 
@@ -545,7 +545,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
              *         throw new UpnpException(UpnpError.INVALID_ARGUMENT);
              *     }
              * 
-             *     UpnpManager.getUpnp().invoke(invocation, new Manipulator.InvokeCompletionHandler() {
+             *     UpnpManager.getControlPoint().invoke(invocation, new Manipulator.InvokeCompletionHandler() {
              *         @Override
              *         public void onSucceed(ActionInfo invocation) {
              *         }
@@ -609,7 +609,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
                 writer.write("\r\n");
             }
 
-            writer.write("        UpnpManager.getUpnp().invoke(action, new MyInvokeCompletionHandler() {\r\n");
+            writer.write("        UpnpManager.getControlPoint().invoke(action, new MyInvokeCompletionHandler() {\r\n");
             writer.write("\r\n");
             writer.write("            @Override\r\n");
             writer.write("            public void onSucceed(ActionInfo invocation) {\r\n");
@@ -787,7 +787,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         writer.write("        }\r\n");
         writer.write("\r\n");
         writer.write("\r\n");
-        writer.write("        UpnpManager.getUpnp().subscribe(this.service,\r\n");
+        writer.write("        UpnpManager.getControlPoint().subscribe(this.service,\r\n");
         writer.write("            new MyCompletionHandler() {\r\n");
         writer.write("\r\n");
         writer.write("                 @Override\r\n");
@@ -848,7 +848,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         writer.write("            throw new UpnpException(UpnpError.INVALID_ARGUMENT);\r\n");
         writer.write("        }\r\n");
         writer.write("\r\n");
-        writer.write("        UpnpManager.getUpnp().unsubscribe(this.service,\r\n");
+        writer.write("        UpnpManager.getControlPoint().unsubscribe(this.service,\r\n");
         writer.write("            new MyCompletionHandler() {");
         writer.write("\r\n");
         writer.write("                @Override\r\n");
