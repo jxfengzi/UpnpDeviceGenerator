@@ -285,7 +285,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("import upnp.typedef.device.invocation.ActionInfo;\r\n");
         builder.append("import upnp.typedef.device.invocation.ActionInfoCreator;\r\n");
         builder.append("import upnp.typedef.exception.UpnpException;\r\n");
-        builder.append("import upnp.typedef.property.DataType;\r\n");
+        builder.append("import upnp.typedef.datatype.DataType;\r\n");
         builder.append("import upnp.typedef.property.Property;\r\n");
         builder.append("import upnp.typedef.property.PropertyDefinition;\r\n");
         builder.append("\r\n");
