@@ -792,6 +792,10 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
                     break;
 
                 case RANGE:
+                    if (p.getDefinition().getAllowedValueRange() == null) {
+                       System.out.println("error: allowedValueRange == null: " + p.getDefinition().getName());
+                    }
+
                     writer.write(String.format("        _%s.setAllowedValueRange(AllowedValueRange.create(DataType.%s, %s, %s));\r\n",
                             name,
                             p.getDefinition().getDataType().toString(),

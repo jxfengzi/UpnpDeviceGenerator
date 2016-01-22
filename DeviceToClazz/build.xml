@@ -43,7 +43,7 @@
         <javac
             srcdir="${dir.java.src}" 
             destdir="${dir.java.build}/classes"
-            debug="off"
+            debug="on"
             includeantruntime="on"> 
             <!--classpath refid="project.class.path"/-->
         </javac>
