@@ -4,6 +4,10 @@ package upnps.api.host.device.binarylight;
 
 import android.util.Log;
 
+import upnp.typedef.datatype.DataType;
+import upnp.typedef.device.Action;
+import upnp.typedef.device.Device;
+import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Argument;
 import upnp.typedef.device.Service;
@@ -12,11 +16,15 @@ import upnp.typedef.device.invocation.EventInfo;
 import upnp.typedef.device.invocation.EventInfoCreator;
 import upnp.typedef.exception.UpnpException;
 
+import upnp.typedef.property.AllowedValueList;
+import upnp.typedef.property.AllowedValueRange;
+import upnp.typedef.property.PropertyDefinition;
 import upnps.manager.UpnpManager;
-import upnps.manager.host.ServiceStub;
+import upnps.manager.host.ServiceHandler;
 
-public class SwitchPower implements ServiceStub {
+public class SwitchPower extends ServiceHandler {
     private static final String TAG = "SwitchPower";
+    private static final ServiceType SERVICE_TYPE =  new ServiceType("SwitchPower", "1");
 
     //-------------------------------------------------------
     // Action Names (3)
@@ -113,8 +121,32 @@ public class SwitchPower implements ServiceStub {
     private Service _service;
     private Handler _handler;
 
-    public SwitchPower(Service service) {
-        _service = service;
+    public SwitchPower(Device device) {
+        _service = new Service(SERVICE_TYPE);
+        _service.setServiceId(toServiceId(SERVICE_TYPE));
+        _service.setScpdUrl(toScpdUrl(device.getDeviceId(), SERVICE_TYPE));
+        _service.setControlUrl(toCtrlUrl(device.getDeviceId(), SERVICE_TYPE));
+        _service.setEventSubUrl(toEventUrl(device.getDeviceId(), SERVICE_TYPE));
+
+        Action _GetTarget = new Action(ACTION_GetTarget);
+        _GetTarget.addArgument(new Argument(_GetTarget_ARG_RetTargetValue, Argument.Direction.OUT, PROPERTY_Target));
+        _service.addAction(_GetTarget);
+
+        Action _SetTarget = new Action(ACTION_SetTarget);
+        _SetTarget.addArgument(new Argument(_SetTarget_ARG_newTargetValue, Argument.Direction.IN, PROPERTY_Target));
+        _service.addAction(_SetTarget);
+
+        Action _GetStatus = new Action(ACTION_GetStatus);
+        _GetStatus.addArgument(new Argument(_GetStatus_ARG_ResultStatus, Argument.Direction.OUT, PROPERTY_Status));
+        _service.addAction(_GetStatus);
+
+        PropertyDefinition _Status = new PropertyDefinition(PROPERTY_Status, DataType.BOOLEAN, true);
+        _service.addProperty(_Status);
+
+        PropertyDefinition _Target = new PropertyDefinition(PROPERTY_Target, DataType.BOOLEAN, false);
+        _service.addProperty(_Target);
+
+        device.addService(_service);
     }
 
     public void setHandler(Handler handler) {

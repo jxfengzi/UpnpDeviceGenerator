@@ -6,7 +6,6 @@ import android.os.Parcel;
 import android.util.Log;
 
 import upnp.typedef.device.urn.DeviceType;
-import upnp.typedef.device.urn.ServiceType;
 import upnps.manager.ctrlpoint.device.AbstractDevice;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.Service;
@@ -14,16 +13,16 @@ import upnp.typedef.device.Service;
 public class BinaryLight extends AbstractDevice {
 
     private static final String TAG = BinaryLight.class.getSimpleName();
+
     /**
      * deviceType & serviceType
      */
     public static final DeviceType DEVICE_TYPE = new DeviceType("BinaryLight", "0.9");
-    public static final ServiceType SERVICE_SwitchPower =  new ServiceType("SwitchPower", "1");
 
     /**
      * serviceId
      */
-    private static final String ID_SwitchPower = "urn:upnp-org:serviceId:SwitchPower";
+    public static final String ID_SwitchPower = "urn:upnp-org:serviceId:SwitchPower";
 
     /**
      * services

@@ -8,45 +8,44 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import upnp.typedef.device.urn.DeviceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.invocation.ActionInfo;
 import upnp.typedef.exception.UpnpException;
 
-import upnps.api.manager.UpnpManager;
-import upnps.api.manager.handler.MyActionHandler;
-import upnps.api.manager.handler.MyCompletionHandler;
-import upnps.api.manager.host.config.DeviceConfig;
-import upnps.api.manager.host.ServiceStub;
+import upnps.manager.UpnpManager;
+import upnps.manager.handler.MyActionHandler;
+import upnps.manager.handler.MyCompletionHandler;
+import upnps.manager.host.config.DeviceConfig;
+import upnps.manager.host.ServiceHandler;
 
 public class AVServer implements MyActionHandler {
 
     private static final String TAG = "AVServer";
 
     /**
-     * deviceType & serviceType
+     * deviceType
      */
-    public static final String DEVICE_TYPE = "AVServer";
-    public static final String SERVICE_ScreenCast = "ScreenCast";
-    public static final String SERVICE_SessionManager = "SessionManager";
+    public static final DeviceType DEVICE_TYPE = new DeviceType("AVServer", "1");
 
     /**
      * serviceId
      */
-    private static final String ID_ScreenCast = "urn:upnp-org:serviceId:ScreenCast";
-    private static final String ID_SessionManager = "urn:upnp-org:serviceId:SessionManager";
+    public static final String ID_ScreenCast = "urn:upnp-org:serviceId:ScreenCast";
+    public static final String ID_SessionManager = "urn:upnp-org:serviceId:SessionManager";
 
     /**
      * device & service handler;
      */
 
     private Device _device;
-    private Map<String, ServiceStub> _services = new HashMap<String, ServiceStub>();
+    private Map<String, ServiceHandler> _services = new HashMap<String, ServiceHandler>();
 
     public AVServer(Context context, DeviceConfig config) throws UpnpException {
         _device = config.build(context);
-        _services.put(ID_ScreenCast, new ScreenCast(_device.getService(ID_ScreenCast)));
-        _services.put(ID_SessionManager, new SessionManager(_device.getService(ID_SessionManager)));
+        _services.put(ID_ScreenCast, new ScreenCast(_device));
+        _services.put(ID_SessionManager, new SessionManager(_device));
     }
 
     public String getDeviceId() {
@@ -54,16 +53,16 @@ public class AVServer implements MyActionHandler {
     }
 
     public void start(MyCompletionHandler handler) throws UpnpException {
-        UpnpManager.getUpnp().register(_device, handler, this);
+        UpnpManager.getHost().register(_device, handler, this);
     }
 
     public void stop(MyCompletionHandler handler) throws UpnpException {
-        UpnpManager.getUpnp().unregister(_device, handler);
+        UpnpManager.getHost().unregister(_device, handler);
     }
 
     @Override
     public UpnpError onAction(ActionInfo info) {
-        ServiceStub handler = _services.get(info.getServiceId());
+        ServiceHandler handler = _services.get(info.getServiceId());
         if (handler == null) {
             Log.e(TAG, "service not found: " + info.getServiceId());
             return UpnpError.UPNP_INTERNAL_ERROR;

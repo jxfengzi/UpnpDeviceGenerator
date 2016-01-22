@@ -80,16 +80,11 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
          * deviceType & serviceType
          */
         writer.write("    /**\r\n");
-        writer.write("     * deviceType & serviceType\r\n");
+        writer.write("     * deviceType\r\n");
         writer.write("     */\r\n");
         writer.write(String.format("    public static final DeviceType DEVICE_TYPE = new DeviceType(\"%s\", \"%s\");\r\n",
                 device.getDeviceType().getName(),
                 device.getDeviceType().getVersion()));
-        for (Service s : device.getServices().values()) {
-            String name = s.getType().getName();
-            String ver = s.getType().getVersion();
-            writer.write(String.format("    public static final ServiceType SERVICE_%s =  new ServiceType(\"%s\", \"%s\");\r\n", name, name, ver));
-        }
         writer.write("\r\n");
 
         /**
@@ -111,7 +106,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("     */\r\n");
         writer.write("\r\n");
         writer.write("    private Device _device;\r\n");
-        writer.write("    private Map<String, ServiceStub> _services = new HashMap<String, ServiceStub>();\r\n");
+        writer.write("    private Map<String, ServiceHandler> _services = new HashMap<String, ServiceHandler>();\r\n");
         writer.write("\r\n");
 
         /**
@@ -124,7 +119,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("        _device = config.build(context);\r\n");
         for (Service s : device.getServices().values()) {
             String name = s.getType().getName();
-            writer.write(String.format("        _services.put(ID_%s, new %s(_device.getService(ID_%s)));\r\n", name, name, name));
+            writer.write(String.format("        _services.put(ID_%s, new %s(_device));\r\n", name, name));
         }
         writer.write("    }\r\n");
         writer.write("\r\n");
@@ -173,7 +168,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
          */
         writer.write("    @Override\r\n");
         writer.write("    public UpnpError onAction(ActionInfo info) {\r\n");
-        writer.write("        ServiceStub handler = _services.get(info.getServiceId());\r\n");
+        writer.write("        ServiceHandler handler = _services.get(info.getServiceId());\r\n");
         writer.write("        if (handler == null) {\r\n");
         writer.write("            Log.e(TAG, \"service not found: \" + info.getServiceId());\r\n");
         writer.write("            return UpnpError.UPNP_INTERNAL_ERROR;\r\n");
@@ -217,7 +212,6 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("\r\n");
 
         builder.append("import upnp.typedef.device.urn.DeviceType;\r\n");
-        builder.append("import upnp.typedef.device.urn.ServiceType;\r\n");
         builder.append("import upnp.typedef.error.UpnpError;\r\n");
         builder.append("import upnp.typedef.device.Device;\r\n");
         builder.append("import upnp.typedef.device.invocation.ActionInfo;\r\n");
@@ -228,7 +222,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("import upnps.manager.handler.MyActionHandler;\r\n");
         builder.append("import upnps.manager.handler.MyCompletionHandler;\r\n");
         builder.append("import upnps.manager.host.config.DeviceConfig;\r\n");
-        builder.append("import upnps.manager.host.ServiceStub;\r\n");
+        builder.append("import upnps.manager.host.ServiceHandler;\r\n");
 
 //        for (Service s : device.getServices().values()) {
 //            builder.append(String.format("import %s.%s;\r\n", pkgName, s.getType().getName()));
@@ -272,6 +266,10 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("import android.util.Log;\r\n");
         builder.append("\r\n");
 
+        builder.append("import upnp.typedef.datatype.DataType;\r\n");
+        builder.append("import upnp.typedef.device.Action;\r\n");
+        builder.append("import upnp.typedef.device.Device;\r\n");
+        builder.append("import upnp.typedef.device.urn.ServiceType;\r\n");
         builder.append("import upnp.typedef.error.UpnpError;\r\n");
         builder.append("import upnp.typedef.device.Argument;\r\n");
         builder.append("import upnp.typedef.device.Service;\r\n");
@@ -282,8 +280,11 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("import upnp.typedef.exception.UpnpException;\r\n");
         builder.append("\r\n");
 
+        builder.append("import upnp.typedef.property.AllowedValueList;\r\n");
+        builder.append("import upnp.typedef.property.AllowedValueRange;\r\n");
+        builder.append("import upnp.typedef.property.PropertyDefinition;\r\n");
         builder.append("import upnps.manager.UpnpManager;\r\n");
-        builder.append("import upnps.manager.host.ServiceStub;\r\n");
+        builder.append("import upnps.manager.host.ServiceHandler;\r\n");
 
         builder.append("\r\n");
 
@@ -292,9 +293,11 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
 
     private void genClazzServiceBegin(OutputStreamWriter writer, Service s) throws IOException {
         String name = s.getType().getName();
-
-        writer.write(String.format("public class %s implements ServiceStub {\r\n", name));
+        String ver = s.getType().getVersion();
+        
+        writer.write(String.format("public class %s extends ServiceHandler {\r\n", name));
         writer.write(String.format("    private static final String TAG = \"%s\";\r\n", name));
+        writer.write(String.format("    private static final ServiceType SERVICE_TYPE =  new ServiceType(\"%s\", \"%s\");\r\n", name, ver));
         writer.write(String.format("\r\n"));
     }
 
@@ -708,12 +711,101 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("\r\n");
 
         /**
-         * public AVTransport(Service service) {
-         *     _service = service;
+         * public AVTransport(Device device) {
+         *     _service = new Service(SERVICE_TYPE);
+         *     _service.setServiceId(toServiceId(SERVICE_TYPE));
+         *     _service.setScpdUrl(toScpdUrl(device.getDeviceId(), SERVICE_TYPE));
+         *     _service.setControlUrl(toCtrlUrl(device.getDeviceId(), SERVICE_TYPE));
+         *     _service.setEventSubUrl(toEventUrl(device.getDeviceId(), SERVICE_TYPE));
+         *
+         *     Action _GetTarget = new Action(ACTION_GetTarget);
+         *     _GetTarget.addArgument(new Argument(_GetTarget_ARG_RetTargetValue, Argument.Direction.OUT, PROPERTY_Target));
+         *     _service.addAction(_GetTarget);
+         *
+         *     Action _SetTarget = new Action(ACTION_SetTarget);
+         *     _SetTarget.addArgument(new Argument(_SetTarget_ARG_newTargetValue, Argument.Direction.IN, PROPERTY_Target));
+         *     _service.addAction(_SetTarget);
+         *
+         *     Action _GetStatus = new Action(ACTION_GetStatus);
+         *     _GetStatus.addArgument(new Argument(_GetStatus_ARG_ResultStatus, Argument.Direction.OUT, PROPERTY_Status));
+         *     _service.addAction(_GetStatus);
+         *
+         *     PropertyDefinition _Target = new PropertyDefinition(PROPERTY_Target, DataType.BOOLEAN, true);
+         *     _Target.setAllowedValueRange(AllowedValueRange.create(DataType.I4, 0, 100));
+         *     _service.addProperty(_Target);
+         *
+         *     PropertyDefinition _Status = new PropertyDefinition(PROPERTY_Status, DataType.BOOLEAN, true);
+         *     AllowedValueList list = new AllowedValueList(DataType.STRING);
+         *     list.appendAllowedValue("ON");
+         *     list.appendAllowedValue("OFF");
+         *     _Status.setAllowedValueList(list);
+         *     _service.addProperty(_Status);
+         *
+         *     device.addService(_service);
          * }
          */
-        writer.write(String.format("    public %s(Service service) {\r\n", s.getType().getName()));
-        writer.write("        _service = service;\r\n");
+        writer.write(String.format("    public %s(Device device) {\r\n", s.getType().getName()));
+        writer.write("        _service = new Service(SERVICE_TYPE);\r\n");
+        writer.write("        _service.setServiceId(toServiceId(SERVICE_TYPE));\r\n");
+        writer.write("        _service.setScpdUrl(toScpdUrl(device.getDeviceId(), SERVICE_TYPE));\r\n");
+        writer.write("        _service.setControlUrl(toCtrlUrl(device.getDeviceId(), SERVICE_TYPE));\r\n");
+        writer.write("        _service.setEventSubUrl(toEventUrl(device.getDeviceId(), SERVICE_TYPE));\r\n");
+        writer.write("\r\n");
+        
+        for (Action action : s.getActions().values()) {
+            String name = action.getName();
+            writer.write(String.format("        Action _%s = new Action(ACTION_%s);\r\n", name, name));
+            for (Argument arg : action.getArguments()) {
+                writer.write(String.format("        _%s.addArgument(new Argument(_%s_ARG_%s, Argument.Direction.%s, PROPERTY_%s));\r\n",
+                        name,
+                        name,
+                        arg.getName(),
+                        arg.getDirection() == Argument.Direction.IN ? "IN" : "OUT",
+                        arg.getRelatedProperty()));
+            }
+            writer.write(String.format("        _service.addAction(_%s);\r\n", name));
+            writer.write("\r\n");
+        }
+
+        for (Property p : s.getProperties()) {
+            String name = p.getDefinition().getName();
+            writer.write(String.format("        PropertyDefinition _%s = new PropertyDefinition(PROPERTY_%s, DataType.%s, %s);\r\n", 
+                    name,
+                    name,
+                    p.getDefinition().getDataType().toString(),
+                    p.getDefinition().isSendEvents() ? "true" : "false"));
+
+            switch (p.getDefinition().getAllowedValueType()) {
+                case ANY:
+                    break;
+
+                case LIST:
+                    writer.write(String.format("        AllowedValueList _%s_list = new AllowedValueList(DataType.%s);\r\n",
+                            name,
+                            p.getDefinition().getDataType().toString()));
+                    
+                    for (Object obj : p.getDefinition().getAllowedValueList().getAllowedValues()) {
+                        writer.write(String.format("        _%s_list.appendAllowedValue(\"%s\");\r\n", name, obj));
+                    }
+
+                    writer.write(String.format("        _%s.setAllowedValueList(_%s_list);\r\n", name, name));
+                    break;
+
+                case RANGE:
+                    writer.write(String.format("        _%s.setAllowedValueRange(AllowedValueRange.create(DataType.%s, %s, %s));\r\n",
+                            name,
+                            p.getDefinition().getDataType().toString(),
+                            p.getDefinition().getAllowedValueRange().getMinValue(),
+                            p.getDefinition().getAllowedValueRange().getMaxValue()
+                            ));
+                    break;
+            }
+
+            writer.write(String.format("        _service.addProperty(_%s);\r\n", name));
+            writer.write("\r\n");
+        }
+
+        writer.write("        device.addService(_service);\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
 

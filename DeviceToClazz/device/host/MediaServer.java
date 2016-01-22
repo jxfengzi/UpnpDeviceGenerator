@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import upnp.typedef.device.urn.DeviceType;
-import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.invocation.ActionInfo;
@@ -19,36 +18,34 @@ import upnps.manager.UpnpManager;
 import upnps.manager.handler.MyActionHandler;
 import upnps.manager.handler.MyCompletionHandler;
 import upnps.manager.host.config.DeviceConfig;
-import upnps.manager.host.ServiceStub;
+import upnps.manager.host.ServiceHandler;
 
 public class MediaServer implements MyActionHandler {
 
     private static final String TAG = "MediaServer";
 
     /**
-     * deviceType & serviceType
+     * deviceType
      */
     public static final DeviceType DEVICE_TYPE = new DeviceType("MediaServer", "1");
-    public static final ServiceType SERVICE_ContentDirectory =  new ServiceType("ContentDirectory", "1");
-    public static final ServiceType SERVICE_ConnectionManager =  new ServiceType("ConnectionManager", "1");
 
     /**
      * serviceId
      */
-    private static final String ID_ContentDirectory = "urn:upnp-org:serviceId:ContentDirectory";
-    private static final String ID_ConnectionManager = "urn:upnp-org:serviceId:ConnectionManager";
+    public static final String ID_ContentDirectory = "urn:upnp-org:serviceId:ContentDirectory";
+    public static final String ID_ConnectionManager = "urn:upnp-org:serviceId:ConnectionManager";
 
     /**
      * device & service handler;
      */
 
     private Device _device;
-    private Map<String, ServiceStub> _services = new HashMap<String, ServiceStub>();
+    private Map<String, ServiceHandler> _services = new HashMap<String, ServiceHandler>();
 
     public MediaServer(Context context, DeviceConfig config) throws UpnpException {
         _device = config.build(context);
-        _services.put(ID_ContentDirectory, new ContentDirectory(_device.getService(ID_ContentDirectory)));
-        _services.put(ID_ConnectionManager, new ConnectionManager(_device.getService(ID_ConnectionManager)));
+        _services.put(ID_ContentDirectory, new ContentDirectory(_device));
+        _services.put(ID_ConnectionManager, new ConnectionManager(_device));
     }
 
     public String getDeviceId() {
@@ -65,7 +62,7 @@ public class MediaServer implements MyActionHandler {
 
     @Override
     public UpnpError onAction(ActionInfo info) {
-        ServiceStub handler = _services.get(info.getServiceId());
+        ServiceHandler handler = _services.get(info.getServiceId());
         if (handler == null) {
             Log.e(TAG, "service not found: " + info.getServiceId());
             return UpnpError.UPNP_INTERNAL_ERROR;

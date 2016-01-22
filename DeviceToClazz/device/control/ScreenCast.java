@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Argument;
 import upnp.typedef.device.Service;
@@ -13,19 +14,20 @@ import upnp.typedef.device.PropertyChanged;
 import upnp.typedef.device.invocation.ActionInfo;
 import upnp.typedef.device.invocation.ActionInfoCreator;
 import upnp.typedef.exception.UpnpException;
-import upnp.typedef.property.DataType;
+import upnp.typedef.datatype.DataType;
 import upnp.typedef.property.Property;
 import upnp.typedef.property.PropertyDefinition;
 
-import upnps.api.manager.UpnpManager;
-import upnps.api.manager.ctrlpoint.device.AbstractService;
-import upnps.api.manager.handler.MyCompletionHandler;
-import upnps.api.manager.handler.MyEventListener;
-import upnps.api.manager.handler.MyInvokeCompletionHandler;
+import upnps.manager.UpnpManager;
+import upnps.manager.ctrlpoint.device.AbstractService;
+import upnps.manager.handler.MyCompletionHandler;
+import upnps.manager.handler.MyEventListener;
+import upnps.manager.handler.MyInvokeCompletionHandler;
 
 public class ScreenCast extends AbstractService {
 
     private static final String TAG = "ScreenCast";
+    private static final ServiceType SERVICE_TYPE =  new ServiceType("ScreenCast", "1");
 
     public ScreenCast(Service service) {
         super(service);
@@ -62,7 +64,7 @@ public class ScreenCast extends AbstractService {
             throw new UpnpException(UpnpError.INVALID_OPERATION, "action not found");
         }
 
-        UpnpManager.getUpnp().invoke(action, new MyInvokeCompletionHandler() {
+        UpnpManager.getControlPoint().invoke(action, new MyInvokeCompletionHandler() {
 
             @Override
             public void onSucceed(ActionInfo invocation) {
@@ -97,7 +99,7 @@ public class ScreenCast extends AbstractService {
             throw new UpnpException(UpnpError.INVALID_OPERATION, "action not found");
         }
 
-        UpnpManager.getUpnp().invoke(action, new MyInvokeCompletionHandler() {
+        UpnpManager.getControlPoint().invoke(action, new MyInvokeCompletionHandler() {
 
             @Override
             public void onSucceed(ActionInfo invocation) {

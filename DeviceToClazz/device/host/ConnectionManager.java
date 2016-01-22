@@ -4,6 +4,10 @@ package upnps.api.host.device.mediaserver;
 
 import android.util.Log;
 
+import upnp.typedef.datatype.DataType;
+import upnp.typedef.device.Action;
+import upnp.typedef.device.Device;
+import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Argument;
 import upnp.typedef.device.Service;
@@ -12,11 +16,15 @@ import upnp.typedef.device.invocation.EventInfo;
 import upnp.typedef.device.invocation.EventInfoCreator;
 import upnp.typedef.exception.UpnpException;
 
+import upnp.typedef.property.AllowedValueList;
+import upnp.typedef.property.AllowedValueRange;
+import upnp.typedef.property.PropertyDefinition;
 import upnps.manager.UpnpManager;
-import upnps.manager.host.ServiceStub;
+import upnps.manager.host.ServiceHandler;
 
-public class ConnectionManager implements ServiceStub {
+public class ConnectionManager extends ServiceHandler {
     private static final String TAG = "ConnectionManager";
+    private static final ServiceType SERVICE_TYPE =  new ServiceType("ConnectionManager", "1");
 
     //-------------------------------------------------------
     // Action Names (3)
@@ -297,8 +305,75 @@ public class ConnectionManager implements ServiceStub {
     private Service _service;
     private Handler _handler;
 
-    public ConnectionManager(Service service) {
-        _service = service;
+    public ConnectionManager(Device device) {
+        _service = new Service(SERVICE_TYPE);
+        _service.setServiceId(toServiceId(SERVICE_TYPE));
+        _service.setScpdUrl(toScpdUrl(device.getDeviceId(), SERVICE_TYPE));
+        _service.setControlUrl(toCtrlUrl(device.getDeviceId(), SERVICE_TYPE));
+        _service.setEventSubUrl(toEventUrl(device.getDeviceId(), SERVICE_TYPE));
+
+        Action _GetCurrentConnectionInfo = new Action(ACTION_GetCurrentConnectionInfo);
+        _GetCurrentConnectionInfo.addArgument(new Argument(_GetCurrentConnectionInfo_ARG_ConnectionID, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_ConnectionID));
+        _GetCurrentConnectionInfo.addArgument(new Argument(_GetCurrentConnectionInfo_ARG_RcsID, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_RcsID));
+        _GetCurrentConnectionInfo.addArgument(new Argument(_GetCurrentConnectionInfo_ARG_AVTransportID, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_AVTransportID));
+        _GetCurrentConnectionInfo.addArgument(new Argument(_GetCurrentConnectionInfo_ARG_ProtocolInfo, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_ProtocolInfo));
+        _GetCurrentConnectionInfo.addArgument(new Argument(_GetCurrentConnectionInfo_ARG_PeerConnectionManager, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_ConnectionManager));
+        _GetCurrentConnectionInfo.addArgument(new Argument(_GetCurrentConnectionInfo_ARG_PeerConnectionID, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_ConnectionID));
+        _GetCurrentConnectionInfo.addArgument(new Argument(_GetCurrentConnectionInfo_ARG_Direction, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_Direction));
+        _GetCurrentConnectionInfo.addArgument(new Argument(_GetCurrentConnectionInfo_ARG_Status, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_ConnectionStatus));
+        _service.addAction(_GetCurrentConnectionInfo);
+
+        Action _GetProtocolInfo = new Action(ACTION_GetProtocolInfo);
+        _GetProtocolInfo.addArgument(new Argument(_GetProtocolInfo_ARG_Source, Argument.Direction.OUT, PROPERTY_SourceProtocolInfo));
+        _GetProtocolInfo.addArgument(new Argument(_GetProtocolInfo_ARG_Sink, Argument.Direction.OUT, PROPERTY_SinkProtocolInfo));
+        _service.addAction(_GetProtocolInfo);
+
+        Action _GetCurrentConnectionIDs = new Action(ACTION_GetCurrentConnectionIDs);
+        _GetCurrentConnectionIDs.addArgument(new Argument(_GetCurrentConnectionIDs_ARG_ConnectionIDs, Argument.Direction.OUT, PROPERTY_CurrentConnectionIDs));
+        _service.addAction(_GetCurrentConnectionIDs);
+
+        PropertyDefinition _A_ARG_TYPE_Direction = new PropertyDefinition(PROPERTY_A_ARG_TYPE_Direction, DataType.STRING, false);
+        AllowedValueList _A_ARG_TYPE_Direction_list = new AllowedValueList(DataType.STRING);
+        _A_ARG_TYPE_Direction_list.appendAllowedValue("Input");
+        _A_ARG_TYPE_Direction_list.appendAllowedValue("Output");
+        _A_ARG_TYPE_Direction.setAllowedValueList(_A_ARG_TYPE_Direction_list);
+        _service.addProperty(_A_ARG_TYPE_Direction);
+
+        PropertyDefinition _SinkProtocolInfo = new PropertyDefinition(PROPERTY_SinkProtocolInfo, DataType.STRING, true);
+        _service.addProperty(_SinkProtocolInfo);
+
+        PropertyDefinition _A_ARG_TYPE_RcsID = new PropertyDefinition(PROPERTY_A_ARG_TYPE_RcsID, DataType.I4, false);
+        _service.addProperty(_A_ARG_TYPE_RcsID);
+
+        PropertyDefinition _A_ARG_TYPE_ConnectionManager = new PropertyDefinition(PROPERTY_A_ARG_TYPE_ConnectionManager, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_ConnectionManager);
+
+        PropertyDefinition _A_ARG_TYPE_ProtocolInfo = new PropertyDefinition(PROPERTY_A_ARG_TYPE_ProtocolInfo, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_ProtocolInfo);
+
+        PropertyDefinition _SourceProtocolInfo = new PropertyDefinition(PROPERTY_SourceProtocolInfo, DataType.STRING, true);
+        _service.addProperty(_SourceProtocolInfo);
+
+        PropertyDefinition _A_ARG_TYPE_ConnectionID = new PropertyDefinition(PROPERTY_A_ARG_TYPE_ConnectionID, DataType.I4, false);
+        _service.addProperty(_A_ARG_TYPE_ConnectionID);
+
+        PropertyDefinition _A_ARG_TYPE_ConnectionStatus = new PropertyDefinition(PROPERTY_A_ARG_TYPE_ConnectionStatus, DataType.STRING, false);
+        AllowedValueList _A_ARG_TYPE_ConnectionStatus_list = new AllowedValueList(DataType.STRING);
+        _A_ARG_TYPE_ConnectionStatus_list.appendAllowedValue("OK");
+        _A_ARG_TYPE_ConnectionStatus_list.appendAllowedValue("ContentFormatMismatch");
+        _A_ARG_TYPE_ConnectionStatus_list.appendAllowedValue("InsufficientBandwidth");
+        _A_ARG_TYPE_ConnectionStatus_list.appendAllowedValue("UnreliableChannel");
+        _A_ARG_TYPE_ConnectionStatus_list.appendAllowedValue("Unknown");
+        _A_ARG_TYPE_ConnectionStatus.setAllowedValueList(_A_ARG_TYPE_ConnectionStatus_list);
+        _service.addProperty(_A_ARG_TYPE_ConnectionStatus);
+
+        PropertyDefinition _CurrentConnectionIDs = new PropertyDefinition(PROPERTY_CurrentConnectionIDs, DataType.STRING, true);
+        _service.addProperty(_CurrentConnectionIDs);
+
+        PropertyDefinition _A_ARG_TYPE_AVTransportID = new PropertyDefinition(PROPERTY_A_ARG_TYPE_AVTransportID, DataType.I4, false);
+        _service.addProperty(_A_ARG_TYPE_AVTransportID);
+
+        device.addService(_service);
     }
 
     public void setHandler(Handler handler) {

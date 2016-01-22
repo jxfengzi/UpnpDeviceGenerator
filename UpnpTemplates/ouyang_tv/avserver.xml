@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <device>
+        <deviceType>urn:schemas-upnp-org:device:AVServer:1</deviceType>
+        <friendlyName>ouyang</friendlyName>
+        <manufacturer>Xiaomi Corporation</manufacturer>
+        <manufacturerURL>http://www.xiaomi.com</manufacturerURL>
+        <modelDescription>Xiaomi AVServer</modelDescription>
+        <modelName>AVServer</modelName>
+        <modelNumber>12</modelNumber>
+        <modelURL>http://www.mi.com/tv</modelURL>
+        <UDN/>
+        <serviceList>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:ScreenCast:1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:ScreenCast</serviceId>
+                <SCPDURL>/scs.xml</SCPDURL>
+                <controlURL>/upnp/xxxx/ctrl/scs</controlURL>
+                <eventSubURL>/upnp/xxx/event/scs</eventSubURL>
+            </service>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:SessionManager:1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:SessionManager</serviceId>
+                <SCPDURL>/sms.xml</SCPDURL>
+                <controlURL>/upnp/xxxx/ctrl/sms</controlURL>
+                <eventSubURL>/upnp/xxx/event/sms</eventSubURL>
+            </service>
+        </serviceList>
+    </device>
+</root>

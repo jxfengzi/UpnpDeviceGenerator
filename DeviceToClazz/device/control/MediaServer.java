@@ -6,7 +6,6 @@ import android.os.Parcel;
 import android.util.Log;
 
 import upnp.typedef.device.urn.DeviceType;
-import upnp.typedef.device.urn.ServiceType;
 import upnps.manager.ctrlpoint.device.AbstractDevice;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.Service;
@@ -14,18 +13,17 @@ import upnp.typedef.device.Service;
 public class MediaServer extends AbstractDevice {
 
     private static final String TAG = MediaServer.class.getSimpleName();
+
     /**
      * deviceType & serviceType
      */
     public static final DeviceType DEVICE_TYPE = new DeviceType("MediaServer", "1");
-    public static final ServiceType SERVICE_ContentDirectory =  new ServiceType("ContentDirectory", "1");
-    public static final ServiceType SERVICE_ConnectionManager =  new ServiceType("ConnectionManager", "1");
 
     /**
      * serviceId
      */
-    private static final String ID_ContentDirectory = "urn:upnp-org:serviceId:ContentDirectory";
-    private static final String ID_ConnectionManager = "urn:upnp-org:serviceId:ConnectionManager";
+    public static final String ID_ContentDirectory = "urn:upnp-org:serviceId:ContentDirectory";
+    public static final String ID_ConnectionManager = "urn:upnp-org:serviceId:ConnectionManager";
 
     /**
      * services

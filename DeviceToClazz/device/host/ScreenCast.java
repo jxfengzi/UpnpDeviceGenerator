@@ -4,6 +4,10 @@ package upnps.api.host.device.avserver;
 
 import android.util.Log;
 
+import upnp.typedef.datatype.DataType;
+import upnp.typedef.device.Action;
+import upnp.typedef.device.Device;
+import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Argument;
 import upnp.typedef.device.Service;
@@ -12,11 +16,15 @@ import upnp.typedef.device.invocation.EventInfo;
 import upnp.typedef.device.invocation.EventInfoCreator;
 import upnp.typedef.exception.UpnpException;
 
-import upnps.api.manager.UpnpManager;
-import upnps.api.manager.host.ServiceStub;
+import upnp.typedef.property.AllowedValueList;
+import upnp.typedef.property.AllowedValueRange;
+import upnp.typedef.property.PropertyDefinition;
+import upnps.manager.UpnpManager;
+import upnps.manager.host.ServiceHandler;
 
-public class ScreenCast implements ServiceStub {
+public class ScreenCast extends ServiceHandler {
     private static final String TAG = "ScreenCast";
+    private static final ServiceType SERVICE_TYPE =  new ServiceType("ScreenCast", "1");
 
     //-------------------------------------------------------
     // Action Names (2)
@@ -87,8 +95,24 @@ public class ScreenCast implements ServiceStub {
     private Service _service;
     private Handler _handler;
 
-    public ScreenCast(Service service) {
-        _service = service;
+    public ScreenCast(Device device) {
+        _service = new Service(SERVICE_TYPE);
+        _service.setServiceId(toServiceId(SERVICE_TYPE));
+        _service.setScpdUrl(toScpdUrl(device.getDeviceId(), SERVICE_TYPE));
+        _service.setControlUrl(toCtrlUrl(device.getDeviceId(), SERVICE_TYPE));
+        _service.setEventSubUrl(toEventUrl(device.getDeviceId(), SERVICE_TYPE));
+
+        Action _PrepareForCast = new Action(ACTION_PrepareForCast);
+        _PrepareForCast.addArgument(new Argument(_PrepareForCast_ARG_Port, Argument.Direction.OUT, PROPERTY_RtspServerPort));
+        _service.addAction(_PrepareForCast);
+
+        Action _CastComplete = new Action(ACTION_CastComplete);
+        _service.addAction(_CastComplete);
+
+        PropertyDefinition _RtspServerPort = new PropertyDefinition(PROPERTY_RtspServerPort, DataType.INT, false);
+        _service.addProperty(_RtspServerPort);
+
+        device.addService(_service);
     }
 
     public void setHandler(Handler handler) {
@@ -117,7 +141,7 @@ public class ScreenCast implements ServiceStub {
         EventInfo info = EventInfoCreator.create(_service);
 
         try {
-            UpnpManager.getUpnp().sendEvents(info);
+            UpnpManager.getHost().sendEvents(info);
         } catch (UpnpException e) {
             e.printStackTrace();
         }

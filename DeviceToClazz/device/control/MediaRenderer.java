@@ -6,7 +6,6 @@ import android.os.Parcel;
 import android.util.Log;
 
 import upnp.typedef.device.urn.DeviceType;
-import upnp.typedef.device.urn.ServiceType;
 import upnps.manager.ctrlpoint.device.AbstractDevice;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.Service;
@@ -14,20 +13,18 @@ import upnp.typedef.device.Service;
 public class MediaRenderer extends AbstractDevice {
 
     private static final String TAG = MediaRenderer.class.getSimpleName();
+
     /**
      * deviceType & serviceType
      */
     public static final DeviceType DEVICE_TYPE = new DeviceType("MediaRenderer", "1");
-    public static final ServiceType SERVICE_AVTransport =  new ServiceType("AVTransport", "1");
-    public static final ServiceType SERVICE_ConnectionManager =  new ServiceType("ConnectionManager", "1");
-    public static final ServiceType SERVICE_RenderingControl =  new ServiceType("RenderingControl", "1");
 
     /**
      * serviceId
      */
-    private static final String ID_AVTransport = "urn:upnp-org:serviceId:AVTransport";
-    private static final String ID_ConnectionManager = "urn:upnp-org:serviceId:ConnectionManager";
-    private static final String ID_RenderingControl = "urn:upnp-org:serviceId:RenderingControl";
+    public static final String ID_AVTransport = "urn:upnp-org:serviceId:AVTransport";
+    public static final String ID_ConnectionManager = "urn:upnp-org:serviceId:ConnectionManager";
+    public static final String ID_RenderingControl = "urn:upnp-org:serviceId:RenderingControl";
 
     /**
      * services

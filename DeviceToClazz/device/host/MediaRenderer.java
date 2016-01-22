@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import upnp.typedef.device.urn.DeviceType;
-import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.invocation.ActionInfo;
@@ -19,39 +18,36 @@ import upnps.manager.UpnpManager;
 import upnps.manager.handler.MyActionHandler;
 import upnps.manager.handler.MyCompletionHandler;
 import upnps.manager.host.config.DeviceConfig;
-import upnps.manager.host.ServiceStub;
+import upnps.manager.host.ServiceHandler;
 
 public class MediaRenderer implements MyActionHandler {
 
     private static final String TAG = "MediaRenderer";
 
     /**
-     * deviceType & serviceType
+     * deviceType
      */
     public static final DeviceType DEVICE_TYPE = new DeviceType("MediaRenderer", "1");
-    public static final ServiceType SERVICE_AVTransport =  new ServiceType("AVTransport", "1");
-    public static final ServiceType SERVICE_ConnectionManager =  new ServiceType("ConnectionManager", "1");
-    public static final ServiceType SERVICE_RenderingControl =  new ServiceType("RenderingControl", "1");
 
     /**
      * serviceId
      */
-    private static final String ID_AVTransport = "urn:upnp-org:serviceId:AVTransport";
-    private static final String ID_ConnectionManager = "urn:upnp-org:serviceId:ConnectionManager";
-    private static final String ID_RenderingControl = "urn:upnp-org:serviceId:RenderingControl";
+    public static final String ID_AVTransport = "urn:upnp-org:serviceId:AVTransport";
+    public static final String ID_ConnectionManager = "urn:upnp-org:serviceId:ConnectionManager";
+    public static final String ID_RenderingControl = "urn:upnp-org:serviceId:RenderingControl";
 
     /**
      * device & service handler;
      */
 
     private Device _device;
-    private Map<String, ServiceStub> _services = new HashMap<String, ServiceStub>();
+    private Map<String, ServiceHandler> _services = new HashMap<String, ServiceHandler>();
 
     public MediaRenderer(Context context, DeviceConfig config) throws UpnpException {
         _device = config.build(context);
-        _services.put(ID_AVTransport, new AVTransport(_device.getService(ID_AVTransport)));
-        _services.put(ID_ConnectionManager, new ConnectionManager(_device.getService(ID_ConnectionManager)));
-        _services.put(ID_RenderingControl, new RenderingControl(_device.getService(ID_RenderingControl)));
+        _services.put(ID_AVTransport, new AVTransport(_device));
+        _services.put(ID_ConnectionManager, new ConnectionManager(_device));
+        _services.put(ID_RenderingControl, new RenderingControl(_device));
     }
 
     public String getDeviceId() {
@@ -68,7 +64,7 @@ public class MediaRenderer implements MyActionHandler {
 
     @Override
     public UpnpError onAction(ActionInfo info) {
-        ServiceStub handler = _services.get(info.getServiceId());
+        ServiceHandler handler = _services.get(info.getServiceId());
         if (handler == null) {
             Log.e(TAG, "service not found: " + info.getServiceId());
             return UpnpError.UPNP_INTERNAL_ERROR;

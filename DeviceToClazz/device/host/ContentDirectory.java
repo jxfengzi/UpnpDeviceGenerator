@@ -4,6 +4,10 @@ package upnps.api.host.device.mediaserver;
 
 import android.util.Log;
 
+import upnp.typedef.datatype.DataType;
+import upnp.typedef.device.Action;
+import upnp.typedef.device.Device;
+import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Argument;
 import upnp.typedef.device.Service;
@@ -12,11 +16,15 @@ import upnp.typedef.device.invocation.EventInfo;
 import upnp.typedef.device.invocation.EventInfoCreator;
 import upnp.typedef.exception.UpnpException;
 
+import upnp.typedef.property.AllowedValueList;
+import upnp.typedef.property.AllowedValueRange;
+import upnp.typedef.property.PropertyDefinition;
 import upnps.manager.UpnpManager;
-import upnps.manager.host.ServiceStub;
+import upnps.manager.host.ServiceHandler;
 
-public class ContentDirectory implements ServiceStub {
+public class ContentDirectory extends ServiceHandler {
     private static final String TAG = "ContentDirectory";
+    private static final ServiceType SERVICE_TYPE =  new ServiceType("ContentDirectory", "1");
 
     //-------------------------------------------------------
     // Action Names (7)
@@ -332,8 +340,111 @@ public class ContentDirectory implements ServiceStub {
     private Service _service;
     private Handler _handler;
 
-    public ContentDirectory(Service service) {
-        _service = service;
+    public ContentDirectory(Device device) {
+        _service = new Service(SERVICE_TYPE);
+        _service.setServiceId(toServiceId(SERVICE_TYPE));
+        _service.setScpdUrl(toScpdUrl(device.getDeviceId(), SERVICE_TYPE));
+        _service.setControlUrl(toCtrlUrl(device.getDeviceId(), SERVICE_TYPE));
+        _service.setEventSubUrl(toEventUrl(device.getDeviceId(), SERVICE_TYPE));
+
+        Action _UpdateObject = new Action(ACTION_UpdateObject);
+        _UpdateObject.addArgument(new Argument(_UpdateObject_ARG_ObjectID, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_ObjectID));
+        _UpdateObject.addArgument(new Argument(_UpdateObject_ARG_CurrentTagValue, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_TagValueList));
+        _UpdateObject.addArgument(new Argument(_UpdateObject_ARG_NewTagValue, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_TagValueList));
+        _service.addAction(_UpdateObject);
+
+        Action _GetSearchCapabilities = new Action(ACTION_GetSearchCapabilities);
+        _GetSearchCapabilities.addArgument(new Argument(_GetSearchCapabilities_ARG_SearchCaps, Argument.Direction.OUT, PROPERTY_SearchCapabilities));
+        _service.addAction(_GetSearchCapabilities);
+
+        Action _Search = new Action(ACTION_Search);
+        _Search.addArgument(new Argument(_Search_ARG_ContainerID, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_ObjectID));
+        _Search.addArgument(new Argument(_Search_ARG_SearchCriteria, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_SearchCriteria));
+        _Search.addArgument(new Argument(_Search_ARG_Filter, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_Filter));
+        _Search.addArgument(new Argument(_Search_ARG_StartingIndex, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_Index));
+        _Search.addArgument(new Argument(_Search_ARG_RequestedCount, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_Count));
+        _Search.addArgument(new Argument(_Search_ARG_SortCriteria, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_SortCriteria));
+        _Search.addArgument(new Argument(_Search_ARG_Result, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_Result));
+        _Search.addArgument(new Argument(_Search_ARG_NumberReturned, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_Count));
+        _Search.addArgument(new Argument(_Search_ARG_TotalMatches, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_Count));
+        _Search.addArgument(new Argument(_Search_ARG_UpdateID, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_UpdateID));
+        _service.addAction(_Search);
+
+        Action _X_GetRemoteSharingStatus = new Action(ACTION_X_GetRemoteSharingStatus);
+        _X_GetRemoteSharingStatus.addArgument(new Argument(_X_GetRemoteSharingStatus_ARG_Status, Argument.Direction.OUT, PROPERTY_X_RemoteSharingEnabled));
+        _service.addAction(_X_GetRemoteSharingStatus);
+
+        Action _GetSortCapabilities = new Action(ACTION_GetSortCapabilities);
+        _GetSortCapabilities.addArgument(new Argument(_GetSortCapabilities_ARG_SortCaps, Argument.Direction.OUT, PROPERTY_SortCapabilities));
+        _service.addAction(_GetSortCapabilities);
+
+        Action _GetSystemUpdateID = new Action(ACTION_GetSystemUpdateID);
+        _GetSystemUpdateID.addArgument(new Argument(_GetSystemUpdateID_ARG_Id, Argument.Direction.OUT, PROPERTY_SystemUpdateID));
+        _service.addAction(_GetSystemUpdateID);
+
+        Action _Browse = new Action(ACTION_Browse);
+        _Browse.addArgument(new Argument(_Browse_ARG_ObjectID, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_ObjectID));
+        _Browse.addArgument(new Argument(_Browse_ARG_BrowseFlag, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_BrowseFlag));
+        _Browse.addArgument(new Argument(_Browse_ARG_Filter, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_Filter));
+        _Browse.addArgument(new Argument(_Browse_ARG_StartingIndex, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_Index));
+        _Browse.addArgument(new Argument(_Browse_ARG_RequestedCount, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_Count));
+        _Browse.addArgument(new Argument(_Browse_ARG_SortCriteria, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_SortCriteria));
+        _Browse.addArgument(new Argument(_Browse_ARG_Result, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_Result));
+        _Browse.addArgument(new Argument(_Browse_ARG_NumberReturned, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_Count));
+        _Browse.addArgument(new Argument(_Browse_ARG_TotalMatches, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_Count));
+        _Browse.addArgument(new Argument(_Browse_ARG_UpdateID, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_UpdateID));
+        _service.addAction(_Browse);
+
+        PropertyDefinition _SystemUpdateID = new PropertyDefinition(PROPERTY_SystemUpdateID, DataType.UI4, true);
+        _service.addProperty(_SystemUpdateID);
+
+        PropertyDefinition _ContainerUpdateIDs = new PropertyDefinition(PROPERTY_ContainerUpdateIDs, DataType.STRING, true);
+        _service.addProperty(_ContainerUpdateIDs);
+
+        PropertyDefinition _A_ARG_TYPE_BrowseFlag = new PropertyDefinition(PROPERTY_A_ARG_TYPE_BrowseFlag, DataType.STRING, false);
+        AllowedValueList _A_ARG_TYPE_BrowseFlag_list = new AllowedValueList(DataType.STRING);
+        _A_ARG_TYPE_BrowseFlag_list.appendAllowedValue("BrowseMetadata");
+        _A_ARG_TYPE_BrowseFlag_list.appendAllowedValue("BrowseDirectChildren");
+        _A_ARG_TYPE_BrowseFlag.setAllowedValueList(_A_ARG_TYPE_BrowseFlag_list);
+        _service.addProperty(_A_ARG_TYPE_BrowseFlag);
+
+        PropertyDefinition _SearchCapabilities = new PropertyDefinition(PROPERTY_SearchCapabilities, DataType.STRING, false);
+        _service.addProperty(_SearchCapabilities);
+
+        PropertyDefinition _A_ARG_TYPE_Filter = new PropertyDefinition(PROPERTY_A_ARG_TYPE_Filter, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_Filter);
+
+        PropertyDefinition _A_ARG_TYPE_TagValueList = new PropertyDefinition(PROPERTY_A_ARG_TYPE_TagValueList, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_TagValueList);
+
+        PropertyDefinition _A_ARG_TYPE_ObjectID = new PropertyDefinition(PROPERTY_A_ARG_TYPE_ObjectID, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_ObjectID);
+
+        PropertyDefinition _X_RemoteSharingEnabled = new PropertyDefinition(PROPERTY_X_RemoteSharingEnabled, DataType.BOOLEAN, true);
+        _service.addProperty(_X_RemoteSharingEnabled);
+
+        PropertyDefinition _A_ARG_TYPE_Count = new PropertyDefinition(PROPERTY_A_ARG_TYPE_Count, DataType.UI4, false);
+        _service.addProperty(_A_ARG_TYPE_Count);
+
+        PropertyDefinition _A_ARG_TYPE_Index = new PropertyDefinition(PROPERTY_A_ARG_TYPE_Index, DataType.UI4, false);
+        _service.addProperty(_A_ARG_TYPE_Index);
+
+        PropertyDefinition _A_ARG_TYPE_SortCriteria = new PropertyDefinition(PROPERTY_A_ARG_TYPE_SortCriteria, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_SortCriteria);
+
+        PropertyDefinition _SortCapabilities = new PropertyDefinition(PROPERTY_SortCapabilities, DataType.STRING, false);
+        _service.addProperty(_SortCapabilities);
+
+        PropertyDefinition _A_ARG_TYPE_UpdateID = new PropertyDefinition(PROPERTY_A_ARG_TYPE_UpdateID, DataType.UI4, false);
+        _service.addProperty(_A_ARG_TYPE_UpdateID);
+
+        PropertyDefinition _A_ARG_TYPE_SearchCriteria = new PropertyDefinition(PROPERTY_A_ARG_TYPE_SearchCriteria, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_SearchCriteria);
+
+        PropertyDefinition _A_ARG_TYPE_Result = new PropertyDefinition(PROPERTY_A_ARG_TYPE_Result, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_Result);
+
+        device.addService(_service);
     }
 
     public void setHandler(Handler handler) {

@@ -74,7 +74,8 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
 
         writer.write(String.format("    private static final String TAG = %s.class.getSimpleName();\r\n",
                 device.getDeviceType().getName()));
-        
+        writer.write("\r\n");
+
         /**
          * deviceType & serviceType
          */
@@ -84,11 +85,6 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         writer.write(String.format("    public static final DeviceType DEVICE_TYPE = new DeviceType(\"%s\", \"%s\");\r\n",
                 device.getDeviceType().getName(),
                 device.getDeviceType().getVersion()));
-        for (Service s : device.getServices().values()) {
-            String name = s.getType().getName();
-            String ver = s.getType().getVersion();
-            writer.write(String.format("    public static final ServiceType SERVICE_%s =  new ServiceType(\"%s\", \"%s\");\r\n", name, name, ver));
-        }
         writer.write("\r\n");
 
         /**
@@ -234,7 +230,6 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("\r\n");
         
         builder.append("import upnp.typedef.device.urn.DeviceType;\r\n");
-        builder.append("import upnp.typedef.device.urn.ServiceType;\r\n");
         builder.append("import upnps.manager.ctrlpoint.device.AbstractDevice;\r\n");
         
 //        for (Service s : device.getServices().values()) {
@@ -283,6 +278,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("import java.util.List;\r\n");
         builder.append("\r\n");
 
+        builder.append("import upnp.typedef.device.urn.ServiceType;\r\n");
         builder.append("import upnp.typedef.error.UpnpError;\r\n");
         builder.append("import upnp.typedef.device.Argument;\r\n");
         builder.append("import upnp.typedef.device.Service;\r\n");
@@ -310,6 +306,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         writer.write(String.format("public class %s extends AbstractService {\r\n", s.getType().getName()));
         writer.write(String.format("\r\n"));
         writer.write(String.format("    private static final String TAG = \"%s\";\r\n", s.getType().getName()));
+        writer.write(String.format("    private static final ServiceType SERVICE_TYPE =  new ServiceType(\"%s\", \"%s\");\r\n", s.getType().getName(), s.getType().getVersion()));
         writer.write(String.format("\r\n"));
         writer.write(String.format("    public %s(Service service) {\r\n", s.getType().getName()));
         writer.write(String.format("        super(service);\r\n"));

@@ -5,25 +5,25 @@ package upnps.api.ctrlpoint.device.avserver;
 import android.os.Parcel;
 import android.util.Log;
 
-import upnps.api.manager.ctrlpoint.device.AbstractDevice;
+import upnp.typedef.device.urn.DeviceType;
+import upnps.manager.ctrlpoint.device.AbstractDevice;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.Service;
 
 public class AVServer extends AbstractDevice {
 
     private static final String TAG = AVServer.class.getSimpleName();
+
     /**
      * deviceType & serviceType
      */
-    public static final String DEVICE_TYPE = "AVServer";
-    public static final String SERVICE_ScreenCast = "ScreenCast";
-    public static final String SERVICE_SessionManager = "SessionManager";
+    public static final DeviceType DEVICE_TYPE = new DeviceType("AVServer", "1");
 
     /**
      * serviceId
      */
-    private static final String ID_ScreenCast = "urn:upnp-org:serviceId:ScreenCast";
-    private static final String ID_SessionManager = "urn:upnp-org:serviceId:SessionManager";
+    public static final String ID_ScreenCast = "urn:upnp-org:serviceId:ScreenCast";
+    public static final String ID_SessionManager = "urn:upnp-org:serviceId:SessionManager";
 
     /**
      * services
@@ -48,7 +48,7 @@ public class AVServer extends AbstractDevice {
             AVServer thiz = new AVServer(device);
 
             do {
-                if (! DEVICE_TYPE.equals(device.getDeviceType().getName())) {
+                if (! DEVICE_TYPE.equals(device.getDeviceType())) {
                     Log.d(TAG, "deviceType invalid: " + device.getDeviceType());
                     thiz = null;
                     break;

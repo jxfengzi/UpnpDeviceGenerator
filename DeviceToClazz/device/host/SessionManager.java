@@ -4,6 +4,10 @@ package upnps.api.host.device.avplayer;
 
 import android.util.Log;
 
+import upnp.typedef.datatype.DataType;
+import upnp.typedef.device.Action;
+import upnp.typedef.device.Device;
+import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Argument;
 import upnp.typedef.device.Service;
@@ -12,11 +16,15 @@ import upnp.typedef.device.invocation.EventInfo;
 import upnp.typedef.device.invocation.EventInfoCreator;
 import upnp.typedef.exception.UpnpException;
 
+import upnp.typedef.property.AllowedValueList;
+import upnp.typedef.property.AllowedValueRange;
+import upnp.typedef.property.PropertyDefinition;
 import upnps.manager.UpnpManager;
-import upnps.manager.host.ServiceStub;
+import upnps.manager.host.ServiceHandler;
 
-public class SessionManager implements ServiceStub {
+public class SessionManager extends ServiceHandler {
     private static final String TAG = "SessionManager";
+    private static final ServiceType SERVICE_TYPE =  new ServiceType("SessionManager", "1");
 
     //-------------------------------------------------------
     // Action Names (5)
@@ -348,8 +356,84 @@ public class SessionManager implements ServiceStub {
     private Service _service;
     private Handler _handler;
 
-    public SessionManager(Service service) {
-        _service = service;
+    public SessionManager(Device device) {
+        _service = new Service(SERVICE_TYPE);
+        _service.setServiceId(toServiceId(SERVICE_TYPE));
+        _service.setScpdUrl(toScpdUrl(device.getDeviceId(), SERVICE_TYPE));
+        _service.setControlUrl(toCtrlUrl(device.getDeviceId(), SERVICE_TYPE));
+        _service.setEventSubUrl(toEventUrl(device.getDeviceId(), SERVICE_TYPE));
+
+        Action _GetSessionCapabilities = new Action(ACTION_GetSessionCapabilities);
+        _GetSessionCapabilities.addArgument(new Argument(_GetSessionCapabilities_ARG_Source, Argument.Direction.OUT, PROPERTY_SourceCapabilityInfo));
+        _GetSessionCapabilities.addArgument(new Argument(_GetSessionCapabilities_ARG_Sink, Argument.Direction.OUT, PROPERTY_SinkCapabilityInfo));
+        _service.addAction(_GetSessionCapabilities);
+
+        Action _PrepareForSession = new Action(ACTION_PrepareForSession);
+        _PrepareForSession.addArgument(new Argument(_PrepareForSession_ARG_RemoteCapabilityInfo, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_CapabilityInfo));
+        _PrepareForSession.addArgument(new Argument(_PrepareForSession_ARG_PeerSessionID, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_SessionID));
+        _PrepareForSession.addArgument(new Argument(_PrepareForSession_ARG_Direction, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_Direction));
+        _PrepareForSession.addArgument(new Argument(_PrepareForSession_ARG_SessionID, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_SessionID));
+        _PrepareForSession.addArgument(new Argument(_PrepareForSession_ARG_Address, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_Address));
+        _PrepareForSession.addArgument(new Argument(_PrepareForSession_ARG_ServiceInstanceIDs, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_InstanceIDs));
+        _service.addAction(_PrepareForSession);
+
+        Action _GetCurrentSessionInfo = new Action(ACTION_GetCurrentSessionInfo);
+        _GetCurrentSessionInfo.addArgument(new Argument(_GetCurrentSessionInfo_ARG_SessionID, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_SessionID));
+        _GetCurrentSessionInfo.addArgument(new Argument(_GetCurrentSessionInfo_ARG_ServiceInstanceIDs, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_InstanceIDs));
+        _GetCurrentSessionInfo.addArgument(new Argument(_GetCurrentSessionInfo_ARG_CapabilityInfo, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_CapabilityInfo));
+        _GetCurrentSessionInfo.addArgument(new Argument(_GetCurrentSessionInfo_ARG_PeerSessionID, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_SessionID));
+        _GetCurrentSessionInfo.addArgument(new Argument(_GetCurrentSessionInfo_ARG_Address, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_Address));
+        _GetCurrentSessionInfo.addArgument(new Argument(_GetCurrentSessionInfo_ARG_Direction, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_Direction));
+        _GetCurrentSessionInfo.addArgument(new Argument(_GetCurrentSessionInfo_ARG_Status, Argument.Direction.OUT, PROPERTY_A_ARG_TYPE_SessionStatus));
+        _service.addAction(_GetCurrentSessionInfo);
+
+        Action _SessionComplete = new Action(ACTION_SessionComplete);
+        _SessionComplete.addArgument(new Argument(_SessionComplete_ARG_SessionID, Argument.Direction.IN, PROPERTY_A_ARG_TYPE_SessionID));
+        _service.addAction(_SessionComplete);
+
+        Action _GetCurrentSessionIDs = new Action(ACTION_GetCurrentSessionIDs);
+        _GetCurrentSessionIDs.addArgument(new Argument(_GetCurrentSessionIDs_ARG_SessionIDs, Argument.Direction.OUT, PROPERTY_CurrentSessionIDs));
+        _service.addAction(_GetCurrentSessionIDs);
+
+        PropertyDefinition _A_ARG_TYPE_Direction = new PropertyDefinition(PROPERTY_A_ARG_TYPE_Direction, DataType.STRING, false);
+        AllowedValueList _A_ARG_TYPE_Direction_list = new AllowedValueList(DataType.STRING);
+        _A_ARG_TYPE_Direction_list.appendAllowedValue("Input");
+        _A_ARG_TYPE_Direction_list.appendAllowedValue("Output");
+        _A_ARG_TYPE_Direction.setAllowedValueList(_A_ARG_TYPE_Direction_list);
+        _service.addProperty(_A_ARG_TYPE_Direction);
+
+        PropertyDefinition _SinkCapabilityInfo = new PropertyDefinition(PROPERTY_SinkCapabilityInfo, DataType.STRING, false);
+        _service.addProperty(_SinkCapabilityInfo);
+
+        PropertyDefinition _SourceCapabilityInfo = new PropertyDefinition(PROPERTY_SourceCapabilityInfo, DataType.STRING, false);
+        _service.addProperty(_SourceCapabilityInfo);
+
+        PropertyDefinition _A_ARG_TYPE_InstanceIDs = new PropertyDefinition(PROPERTY_A_ARG_TYPE_InstanceIDs, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_InstanceIDs);
+
+        PropertyDefinition _A_ARG_TYPE_CapabilityInfo = new PropertyDefinition(PROPERTY_A_ARG_TYPE_CapabilityInfo, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_CapabilityInfo);
+
+        PropertyDefinition _A_ARG_TYPE_SessionID = new PropertyDefinition(PROPERTY_A_ARG_TYPE_SessionID, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_SessionID);
+
+        PropertyDefinition _CurrentSessionIDs = new PropertyDefinition(PROPERTY_CurrentSessionIDs, DataType.STRING, false);
+        _service.addProperty(_CurrentSessionIDs);
+
+        PropertyDefinition _A_ARG_TYPE_Address = new PropertyDefinition(PROPERTY_A_ARG_TYPE_Address, DataType.STRING, false);
+        _service.addProperty(_A_ARG_TYPE_Address);
+
+        PropertyDefinition _A_ARG_TYPE_SessionStatus = new PropertyDefinition(PROPERTY_A_ARG_TYPE_SessionStatus, DataType.STRING, false);
+        AllowedValueList _A_ARG_TYPE_SessionStatus_list = new AllowedValueList(DataType.STRING);
+        _A_ARG_TYPE_SessionStatus_list.appendAllowedValue("OK");
+        _A_ARG_TYPE_SessionStatus_list.appendAllowedValue("ContentFormatMismatch");
+        _A_ARG_TYPE_SessionStatus_list.appendAllowedValue("InsufficientBandwidth");
+        _A_ARG_TYPE_SessionStatus_list.appendAllowedValue("UnreliableChannel");
+        _A_ARG_TYPE_SessionStatus_list.appendAllowedValue("Unknown");
+        _A_ARG_TYPE_SessionStatus.setAllowedValueList(_A_ARG_TYPE_SessionStatus_list);
+        _service.addProperty(_A_ARG_TYPE_SessionStatus);
+
+        device.addService(_service);
     }
 
     public void setHandler(Handler handler) {

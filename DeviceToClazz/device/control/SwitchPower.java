@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Argument;
 import upnp.typedef.device.Service;
@@ -26,6 +27,7 @@ import upnps.manager.handler.MyInvokeCompletionHandler;
 public class SwitchPower extends AbstractService {
 
     private static final String TAG = "SwitchPower";
+    private static final ServiceType SERVICE_TYPE =  new ServiceType("SwitchPower", "1");
 
     public SwitchPower(Service service) {
         super(service);
