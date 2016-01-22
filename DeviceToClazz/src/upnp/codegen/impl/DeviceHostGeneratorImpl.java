@@ -744,7 +744,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
          *     device.addService(_service);
          * }
          */
-        writer.write(String.format("    public %s(Device device) {\r\n", s.getType().getName()));
+        writer.write(String.format("    public %s(Device device) throws UpnpException {\r\n", s.getType().getName()));
         writer.write("        _service = new Service(SERVICE_TYPE);\r\n");
         writer.write("        _service.setServiceId(toServiceId(SERVICE_TYPE));\r\n");
         writer.write("        _service.setScpdUrl(toScpdUrl(device.getDeviceId(), SERVICE_TYPE));\r\n");
@@ -796,10 +796,12 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
                        System.out.println("error: allowedValueRange == null: " + p.getDefinition().getName());
                     }
 
-                    writer.write(String.format("        _%s.setAllowedValueRange(AllowedValueRange.create(DataType.%s, %s, %s));\r\n",
+                    writer.write(String.format("        _%s.setAllowedValueRange(AllowedValueRange.create(DataType.%s, %s.valueOf(%s), %s.valueOf(%s)));\r\n",
                             name,
                             p.getDefinition().getDataType().toString(),
+                            p.getDefinition().getDataType().getJavaDataType().getSimpleName(),
                             p.getDefinition().getAllowedValueRange().getMinValue(),
+                            p.getDefinition().getDataType().getJavaDataType().getSimpleName(),
                             p.getDefinition().getAllowedValueRange().getMaxValue()
                             ));
                     break;
