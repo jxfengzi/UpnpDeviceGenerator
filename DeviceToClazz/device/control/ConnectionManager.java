@@ -13,15 +13,15 @@ import upnp.typedef.device.PropertyChanged;
 import upnp.typedef.device.invocation.ActionInfo;
 import upnp.typedef.device.invocation.ActionInfoCreator;
 import upnp.typedef.exception.UpnpException;
-import upnp.typedef.property.DataType;
+import upnp.typedef.datatype.DataType;
 import upnp.typedef.property.Property;
 import upnp.typedef.property.PropertyDefinition;
 
-import upnps.api.manager.UpnpManager;
-import upnps.api.manager.ctrlpoint.device.AbstractService;
-import upnps.api.manager.handler.MyCompletionHandler;
-import upnps.api.manager.handler.MyEventListener;
-import upnps.api.manager.handler.MyInvokeCompletionHandler;
+import upnps.manager.UpnpManager;
+import upnps.manager.ctrlpoint.device.AbstractService;
+import upnps.manager.handler.MyCompletionHandler;
+import upnps.manager.handler.MyEventListener;
+import upnps.manager.handler.MyInvokeCompletionHandler;
 
 public class ConnectionManager extends AbstractService {
 
@@ -210,7 +210,7 @@ public class ConnectionManager extends AbstractService {
             throw new UpnpException(UpnpError.INVALID_ARGUMENT);
         }
 
-        UpnpManager.getUpnp().invoke(action, new MyInvokeCompletionHandler() {
+        UpnpManager.getControlPoint().invoke(action, new MyInvokeCompletionHandler() {
 
             @Override
             public void onSucceed(ActionInfo invocation) {
@@ -294,7 +294,7 @@ public class ConnectionManager extends AbstractService {
             throw new UpnpException(UpnpError.INVALID_OPERATION, "action not found");
         }
 
-        UpnpManager.getUpnp().invoke(action, new MyInvokeCompletionHandler() {
+        UpnpManager.getControlPoint().invoke(action, new MyInvokeCompletionHandler() {
 
             @Override
             public void onSucceed(ActionInfo invocation) {
@@ -337,7 +337,7 @@ public class ConnectionManager extends AbstractService {
             throw new UpnpException(UpnpError.INVALID_OPERATION, "action not found");
         }
 
-        UpnpManager.getUpnp().invoke(action, new MyInvokeCompletionHandler() {
+        UpnpManager.getControlPoint().invoke(action, new MyInvokeCompletionHandler() {
 
             @Override
             public void onSucceed(ActionInfo invocation) {
@@ -391,7 +391,7 @@ public class ConnectionManager extends AbstractService {
         }
 
 
-        UpnpManager.getUpnp().subscribe(this.service,
+        UpnpManager.getControlPoint().subscribe(this.service,
             new MyCompletionHandler() {
 
                  @Override
@@ -439,7 +439,7 @@ public class ConnectionManager extends AbstractService {
             throw new UpnpException(UpnpError.INVALID_ARGUMENT);
         }
 
-        UpnpManager.getUpnp().unsubscribe(this.service,
+        UpnpManager.getControlPoint().unsubscribe(this.service,
             new MyCompletionHandler() {
                 @Override
                 public void onSucceed() {

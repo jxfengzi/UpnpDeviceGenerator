@@ -81,10 +81,13 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         writer.write("    /**\r\n");
         writer.write("     * deviceType & serviceType\r\n");
         writer.write("     */\r\n");
-        writer.write(String.format("    public static final String DEVICE_TYPE = \"%s\";\r\n", device.getDeviceType().getName()));
+        writer.write(String.format("    public static final DeviceType DEVICE_TYPE = new DeviceType(\"%s\", \"%s\");\r\n",
+                device.getDeviceType().getName(),
+                device.getDeviceType().getVersion()));
         for (Service s : device.getServices().values()) {
             String name = s.getType().getName();
-            writer.write(String.format("    public static final String SERVICE_%s = \"%s\";\r\n", name, name));
+            String ver = s.getType().getVersion();
+            writer.write(String.format("    public static final ServiceType SERVICE_%s =  new ServiceType(\"%s\", \"%s\");\r\n", name, name, ver));
         }
         writer.write("\r\n");
 
@@ -95,7 +98,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         writer.write("     * serviceId\r\n");
         writer.write("     */\r\n");
         for (Service s : device.getServices().values()) {
-            writer.write(String.format("    private static final String ID_%s = \"%s\";\r\n", s.getType().getName(), s.getServiceId()));
+            writer.write(String.format("    public static final String ID_%s = \"%s\";\r\n", s.getType().getName(), s.getServiceId()));
         }
         writer.write("\r\n");
         
@@ -133,7 +136,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         writer.write(String.format("            %s thiz = new %s(device);\r\n", device.getDeviceType().getName(), device.getDeviceType().getName()));
         writer.write(String.format("\r\n"));
         writer.write(String.format("            do {\r\n"));
-        writer.write(String.format("                if (! DEVICE_TYPE.equals(device.getDeviceType().getName())) {\r\n"));
+        writer.write(String.format("                if (! DEVICE_TYPE.equals(device.getDeviceType())) {\r\n"));
         writer.write(String.format("                    Log.d(TAG, \"deviceType invalid: \" + device.getDeviceType());\r\n"));
         writer.write(String.format("                    thiz = null;\r\n"));
         writer.write(String.format("                    break;\r\n"));
@@ -230,6 +233,8 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("import android.util.Log;\r\n");
         builder.append("\r\n");
         
+        builder.append("import upnp.typedef.device.urn.DeviceType;\r\n");
+        builder.append("import upnp.typedef.device.urn.ServiceType;\r\n");
         builder.append("import upnps.manager.ctrlpoint.device.AbstractDevice;\r\n");
         
 //        for (Service s : device.getServices().values()) {

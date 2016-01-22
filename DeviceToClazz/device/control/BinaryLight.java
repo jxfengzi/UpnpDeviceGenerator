@@ -5,7 +5,9 @@ package upnps.api.ctrlpoint.device.binarylight;
 import android.os.Parcel;
 import android.util.Log;
 
-import upnps.api.manager.ctrlpoint.device.AbstractDevice;
+import upnp.typedef.device.urn.DeviceType;
+import upnp.typedef.device.urn.ServiceType;
+import upnps.manager.ctrlpoint.device.AbstractDevice;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.Service;
 
@@ -15,8 +17,8 @@ public class BinaryLight extends AbstractDevice {
     /**
      * deviceType & serviceType
      */
-    public static final String DEVICE_TYPE = "BinaryLight";
-    public static final String SERVICE_SwitchPower = "SwitchPower";
+    public static final DeviceType DEVICE_TYPE = new DeviceType("BinaryLight", "0.9");
+    public static final ServiceType SERVICE_SwitchPower =  new ServiceType("SwitchPower", "1");
 
     /**
      * serviceId
@@ -42,7 +44,7 @@ public class BinaryLight extends AbstractDevice {
             BinaryLight thiz = new BinaryLight(device);
 
             do {
-                if (! DEVICE_TYPE.equals(device.getDeviceType().getName())) {
+                if (! DEVICE_TYPE.equals(device.getDeviceType())) {
                     Log.d(TAG, "deviceType invalid: " + device.getDeviceType());
                     thiz = null;
                     break;

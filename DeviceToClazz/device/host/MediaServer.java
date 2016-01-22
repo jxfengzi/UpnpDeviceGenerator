@@ -8,16 +8,18 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import upnp.typedef.device.urn.DeviceType;
+import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.invocation.ActionInfo;
 import upnp.typedef.exception.UpnpException;
 
-import upnps.api.manager.UpnpManager;
-import upnps.api.manager.handler.MyActionHandler;
-import upnps.api.manager.handler.MyCompletionHandler;
-import upnps.api.manager.host.config.DeviceConfig;
-import upnps.api.manager.host.ServiceStub;
+import upnps.manager.UpnpManager;
+import upnps.manager.handler.MyActionHandler;
+import upnps.manager.handler.MyCompletionHandler;
+import upnps.manager.host.config.DeviceConfig;
+import upnps.manager.host.ServiceStub;
 
 public class MediaServer implements MyActionHandler {
 
@@ -26,9 +28,9 @@ public class MediaServer implements MyActionHandler {
     /**
      * deviceType & serviceType
      */
-    public static final String DEVICE_TYPE = "MediaServer";
-    public static final String SERVICE_ContentDirectory = "ContentDirectory";
-    public static final String SERVICE_ConnectionManager = "ConnectionManager";
+    public static final DeviceType DEVICE_TYPE = new DeviceType("MediaServer", "1");
+    public static final ServiceType SERVICE_ContentDirectory =  new ServiceType("ContentDirectory", "1");
+    public static final ServiceType SERVICE_ConnectionManager =  new ServiceType("ConnectionManager", "1");
 
     /**
      * serviceId
@@ -54,11 +56,11 @@ public class MediaServer implements MyActionHandler {
     }
 
     public void start(MyCompletionHandler handler) throws UpnpException {
-        UpnpManager.getUpnp().register(_device, handler, this);
+        UpnpManager.getHost().register(_device, handler, this);
     }
 
     public void stop(MyCompletionHandler handler) throws UpnpException {
-        UpnpManager.getUpnp().unregister(_device, handler);
+        UpnpManager.getHost().unregister(_device, handler);
     }
 
     @Override

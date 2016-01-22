@@ -5,7 +5,9 @@ package upnps.api.ctrlpoint.device.avplayer;
 import android.os.Parcel;
 import android.util.Log;
 
-import upnps.api.manager.ctrlpoint.device.AbstractDevice;
+import upnp.typedef.device.urn.DeviceType;
+import upnp.typedef.device.urn.ServiceType;
+import upnps.manager.ctrlpoint.device.AbstractDevice;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.Service;
 
@@ -15,10 +17,10 @@ public class AVPlayer extends AbstractDevice {
     /**
      * deviceType & serviceType
      */
-    public static final String DEVICE_TYPE = "AVPlayer";
-    public static final String SERVICE_AVTransport = "AVTransport";
-    public static final String SERVICE_RenderingControl = "RenderingControl";
-    public static final String SERVICE_SessionManager = "SessionManager";
+    public static final DeviceType DEVICE_TYPE = new DeviceType("AVPlayer", "1");
+    public static final ServiceType SERVICE_AVTransport =  new ServiceType("AVTransport", "1");
+    public static final ServiceType SERVICE_RenderingControl =  new ServiceType("RenderingControl", "1");
+    public static final ServiceType SERVICE_SessionManager =  new ServiceType("SessionManager", "1");
 
     /**
      * serviceId
@@ -54,7 +56,7 @@ public class AVPlayer extends AbstractDevice {
             AVPlayer thiz = new AVPlayer(device);
 
             do {
-                if (! DEVICE_TYPE.equals(device.getDeviceType().getName())) {
+                if (! DEVICE_TYPE.equals(device.getDeviceType())) {
                     Log.d(TAG, "deviceType invalid: " + device.getDeviceType());
                     thiz = null;
                     break;

@@ -8,16 +8,18 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import upnp.typedef.device.urn.DeviceType;
+import upnp.typedef.device.urn.ServiceType;
 import upnp.typedef.error.UpnpError;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.invocation.ActionInfo;
 import upnp.typedef.exception.UpnpException;
 
-import upnps.api.manager.UpnpManager;
-import upnps.api.manager.handler.MyActionHandler;
-import upnps.api.manager.handler.MyCompletionHandler;
-import upnps.api.manager.host.config.DeviceConfig;
-import upnps.api.manager.host.ServiceStub;
+import upnps.manager.UpnpManager;
+import upnps.manager.handler.MyActionHandler;
+import upnps.manager.handler.MyCompletionHandler;
+import upnps.manager.host.config.DeviceConfig;
+import upnps.manager.host.ServiceStub;
 
 public class AVPlayer implements MyActionHandler {
 
@@ -26,10 +28,10 @@ public class AVPlayer implements MyActionHandler {
     /**
      * deviceType & serviceType
      */
-    public static final String DEVICE_TYPE = "AVPlayer";
-    public static final String SERVICE_AVTransport = "AVTransport";
-    public static final String SERVICE_RenderingControl = "RenderingControl";
-    public static final String SERVICE_SessionManager = "SessionManager";
+    public static final DeviceType DEVICE_TYPE = new DeviceType("AVPlayer", "1");
+    public static final ServiceType SERVICE_AVTransport =  new ServiceType("AVTransport", "1");
+    public static final ServiceType SERVICE_RenderingControl =  new ServiceType("RenderingControl", "1");
+    public static final ServiceType SERVICE_SessionManager =  new ServiceType("SessionManager", "1");
 
     /**
      * serviceId
@@ -57,11 +59,11 @@ public class AVPlayer implements MyActionHandler {
     }
 
     public void start(MyCompletionHandler handler) throws UpnpException {
-        UpnpManager.getUpnp().register(_device, handler, this);
+        UpnpManager.getHost().register(_device, handler, this);
     }
 
     public void stop(MyCompletionHandler handler) throws UpnpException {
-        UpnpManager.getUpnp().unregister(_device, handler);
+        UpnpManager.getHost().unregister(_device, handler);
     }
 
     @Override

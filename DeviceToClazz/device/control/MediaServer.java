@@ -5,7 +5,9 @@ package upnps.api.ctrlpoint.device.mediaserver;
 import android.os.Parcel;
 import android.util.Log;
 
-import upnps.api.manager.ctrlpoint.device.AbstractDevice;
+import upnp.typedef.device.urn.DeviceType;
+import upnp.typedef.device.urn.ServiceType;
+import upnps.manager.ctrlpoint.device.AbstractDevice;
 import upnp.typedef.device.Device;
 import upnp.typedef.device.Service;
 
@@ -15,9 +17,9 @@ public class MediaServer extends AbstractDevice {
     /**
      * deviceType & serviceType
      */
-    public static final String DEVICE_TYPE = "MediaServer";
-    public static final String SERVICE_ContentDirectory = "ContentDirectory";
-    public static final String SERVICE_ConnectionManager = "ConnectionManager";
+    public static final DeviceType DEVICE_TYPE = new DeviceType("MediaServer", "1");
+    public static final ServiceType SERVICE_ContentDirectory =  new ServiceType("ContentDirectory", "1");
+    public static final ServiceType SERVICE_ConnectionManager =  new ServiceType("ConnectionManager", "1");
 
     /**
      * serviceId
@@ -48,7 +50,7 @@ public class MediaServer extends AbstractDevice {
             MediaServer thiz = new MediaServer(device);
 
             do {
-                if (! DEVICE_TYPE.equals(device.getDeviceType().getName())) {
+                if (! DEVICE_TYPE.equals(device.getDeviceType())) {
                     Log.d(TAG, "deviceType invalid: " + device.getDeviceType());
                     thiz = null;
                     break;

@@ -12,8 +12,8 @@ import upnp.typedef.device.invocation.EventInfo;
 import upnp.typedef.device.invocation.EventInfoCreator;
 import upnp.typedef.exception.UpnpException;
 
-import upnps.api.manager.UpnpManager;
-import upnps.api.manager.host.ServiceStub;
+import upnps.manager.UpnpManager;
+import upnps.manager.host.ServiceStub;
 
 public class ContentDirectory implements ServiceStub {
     private static final String TAG = "ContentDirectory";
@@ -382,7 +382,7 @@ public class ContentDirectory implements ServiceStub {
         EventInfo info = EventInfoCreator.create(_service);
 
         try {
-            UpnpManager.getUpnp().sendEvents(info);
+            UpnpManager.getHost().sendEvents(info);
         } catch (UpnpException e) {
             e.printStackTrace();
         }

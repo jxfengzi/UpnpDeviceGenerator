@@ -82,10 +82,13 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("    /**\r\n");
         writer.write("     * deviceType & serviceType\r\n");
         writer.write("     */\r\n");
-        writer.write(String.format("    public static final String DEVICE_TYPE = \"%s\";\r\n", device.getDeviceType().getName()));
+        writer.write(String.format("    public static final DeviceType DEVICE_TYPE = new DeviceType(\"%s\", \"%s\");\r\n",
+                device.getDeviceType().getName(),
+                device.getDeviceType().getVersion()));
         for (Service s : device.getServices().values()) {
             String name = s.getType().getName();
-            writer.write(String.format("    public static final String SERVICE_%s = \"%s\";\r\n", name, name));
+            String ver = s.getType().getVersion();
+            writer.write(String.format("    public static final ServiceType SERVICE_%s =  new ServiceType(\"%s\", \"%s\");\r\n", name, name, ver));
         }
         writer.write("\r\n");
 
@@ -96,7 +99,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("     * serviceId\r\n");
         writer.write("     */\r\n");
         for (Service s : device.getServices().values()) {
-            writer.write(String.format("    private static final String ID_%s = \"%s\";\r\n", s.getType().getName(), s.getServiceId()));
+            writer.write(String.format("    public static final String ID_%s = \"%s\";\r\n", s.getType().getName(), s.getServiceId()));
         }
         writer.write("\r\n");
 
@@ -213,6 +216,8 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("import java.util.Map;\r\n");
         builder.append("\r\n");
 
+        builder.append("import upnp.typedef.device.urn.DeviceType;\r\n");
+        builder.append("import upnp.typedef.device.urn.ServiceType;\r\n");
         builder.append("import upnp.typedef.error.UpnpError;\r\n");
         builder.append("import upnp.typedef.device.Device;\r\n");
         builder.append("import upnp.typedef.device.invocation.ActionInfo;\r\n");
