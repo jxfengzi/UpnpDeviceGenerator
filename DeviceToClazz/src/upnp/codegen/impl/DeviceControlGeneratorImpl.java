@@ -229,15 +229,10 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("import android.util.Log;\r\n");
         builder.append("\r\n");
         
-        builder.append("import upnp.typedef.device.urn.DeviceType;\r\n");
-        builder.append("import miui.upnp.manager.ctrlpoint.device.AbstractDevice;\r\n");
-        
-//        for (Service s : device.getServices().values()) {
-//            builder.append(String.format("import jing.api.device.dlna.service.%s;\r\n", s.getType().getName()));
-//        }
-
-        builder.append("import upnp.typedef.device.Device;\r\n");
-        builder.append("import upnp.typedef.device.Service;\r\n");
+        builder.append("import miui.upnp.typedef.device.urn.DeviceType;\r\n");
+        builder.append("import miui.upnp.manager.ctrlpoint.AbstractDevice;\r\n");
+        builder.append("import miui.upnp.typedef.device.Device;\r\n");
+        builder.append("import miui.upnp.typedef.device.Service;\r\n");
         builder.append("\r\n");
 
         writer.write(builder.toString());
@@ -278,21 +273,21 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("import java.util.List;\r\n");
         builder.append("\r\n");
 
-        builder.append("import upnp.typedef.device.urn.ServiceType;\r\n");
-        builder.append("import upnp.typedef.error.UpnpError;\r\n");
-        builder.append("import upnp.typedef.device.Argument;\r\n");
-        builder.append("import upnp.typedef.device.Service;\r\n");
-        builder.append("import upnp.typedef.device.PropertyChanged;\r\n");
-        builder.append("import upnp.typedef.device.invocation.ActionInfo;\r\n");
-        builder.append("import upnp.typedef.device.invocation.ActionInfoCreator;\r\n");
-        builder.append("import upnp.typedef.exception.UpnpException;\r\n");
-        builder.append("import upnp.typedef.datatype.DataType;\r\n");
-        builder.append("import upnp.typedef.property.Property;\r\n");
-        builder.append("import upnp.typedef.property.PropertyDefinition;\r\n");
+        builder.append("import miui.upnp.typedef.device.urn.ServiceType;\r\n");
+        builder.append("import miui.upnp.typedef.error.UpnpError;\r\n");
+        builder.append("import miui.upnp.typedef.device.Argument;\r\n");
+        builder.append("import miui.upnp.typedef.device.Service;\r\n");
+        builder.append("import miui.upnp.typedef.device.PropertyChanged;\r\n");
+        builder.append("import miui.upnp.typedef.device.invocation.ActionInfo;\r\n");
+        builder.append("import miui.upnp.typedef.device.invocation.ActionInfoCreator;\r\n");
+        builder.append("import miui.upnp.typedef.exception.UpnpException;\r\n");
+        builder.append("import miui.upnp.typedef.datatype.DataType;\r\n");
+        builder.append("import miui.upnp.typedef.property.Property;\r\n");
+        builder.append("import miui.upnp.typedef.property.PropertyDefinition;\r\n");
         builder.append("\r\n");
         
         builder.append("import miui.upnp.manager.UpnpManager;\r\n");
-        builder.append("import miui.upnp.manager.ctrlpoint.device.AbstractService;\r\n");
+        builder.append("import miui.upnp.manager.ctrlpoint.AbstractService;\r\n");
         builder.append("import miui.upnp.manager.handler.MyCompletionHandler;\r\n");
         builder.append("import miui.upnp.manager.handler.MyEventListener;\r\n");
         builder.append("import miui.upnp.manager.handler.MyInvokeCompletionHandler;\r\n");
