@@ -218,11 +218,11 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("import upnp.typedef.exception.UpnpException;\r\n");
         builder.append("\r\n");
 
-        builder.append("import upnps.manager.UpnpManager;\r\n");
-        builder.append("import upnps.manager.handler.MyActionHandler;\r\n");
-        builder.append("import upnps.manager.handler.MyCompletionHandler;\r\n");
-        builder.append("import upnps.manager.host.config.DeviceConfig;\r\n");
-        builder.append("import upnps.manager.host.ServiceHandler;\r\n");
+        builder.append("import miui.upnp.manager.UpnpManager;\r\n");
+        builder.append("import miui.upnp.manager.handler.MyActionHandler;\r\n");
+        builder.append("import miui.upnp.manager.handler.MyCompletionHandler;\r\n");
+        builder.append("import miui.upnp.manager.host.config.DeviceConfig;\r\n");
+        builder.append("import miui.upnp.manager.host.ServiceHandler;\r\n");
 
 //        for (Service s : device.getServices().values()) {
 //            builder.append(String.format("import %s.%s;\r\n", pkgName, s.getType().getName()));
@@ -283,8 +283,8 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("import upnp.typedef.property.AllowedValueList;\r\n");
         builder.append("import upnp.typedef.property.AllowedValueRange;\r\n");
         builder.append("import upnp.typedef.property.PropertyDefinition;\r\n");
-        builder.append("import upnps.manager.UpnpManager;\r\n");
-        builder.append("import upnps.manager.host.ServiceHandler;\r\n");
+        builder.append("import miui.upnp.manager.UpnpManager;\r\n");
+        builder.append("import miui.upnp.manager.host.ServiceHandler;\r\n");
 
         builder.append("\r\n");
 

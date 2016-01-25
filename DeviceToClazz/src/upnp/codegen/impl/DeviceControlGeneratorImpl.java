@@ -230,7 +230,7 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("\r\n");
         
         builder.append("import upnp.typedef.device.urn.DeviceType;\r\n");
-        builder.append("import upnps.manager.ctrlpoint.device.AbstractDevice;\r\n");
+        builder.append("import miui.upnp.manager.ctrlpoint.device.AbstractDevice;\r\n");
         
 //        for (Service s : device.getServices().values()) {
 //            builder.append(String.format("import jing.api.device.dlna.service.%s;\r\n", s.getType().getName()));
@@ -291,11 +291,11 @@ public class DeviceControlGeneratorImpl implements DeviceGenerator {
         builder.append("import upnp.typedef.property.PropertyDefinition;\r\n");
         builder.append("\r\n");
         
-        builder.append("import upnps.manager.UpnpManager;\r\n");
-        builder.append("import upnps.manager.ctrlpoint.device.AbstractService;\r\n");
-        builder.append("import upnps.manager.handler.MyCompletionHandler;\r\n");
-        builder.append("import upnps.manager.handler.MyEventListener;\r\n");
-        builder.append("import upnps.manager.handler.MyInvokeCompletionHandler;\r\n");
+        builder.append("import miui.upnp.manager.UpnpManager;\r\n");
+        builder.append("import miui.upnp.manager.ctrlpoint.device.AbstractService;\r\n");
+        builder.append("import miui.upnp.manager.handler.MyCompletionHandler;\r\n");
+        builder.append("import miui.upnp.manager.handler.MyEventListener;\r\n");
+        builder.append("import miui.upnp.manager.handler.MyInvokeCompletionHandler;\r\n");
 
         builder.append("\r\n");
 
