@@ -67,7 +67,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         genClazzComment(writer);
         genDeviceImport(writer, device, pkgName);
 
-        writer.write(String.format("public class %s implements MyActionHandler {\r\n", device.getDeviceType().getName()));
+        writer.write(String.format("public class %s implements UpnpActionHandler {\r\n", device.getDeviceType().getName()));
         writer.write("\r\n");
 
         /**
@@ -77,22 +77,14 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("\r\n");
 
         /**
-         * deviceType & serviceType
+         * deviceType & serviceId
          */
         writer.write("    /**\r\n");
-        writer.write("     * deviceType\r\n");
+        writer.write("     * deviceType & serviceId\r\n");
         writer.write("     */\r\n");
         writer.write(String.format("    public static final DeviceType DEVICE_TYPE = new DeviceType(\"%s\", \"%s\");\r\n",
                 device.getDeviceType().getName(),
                 device.getDeviceType().getVersion()));
-        writer.write("\r\n");
-
-        /**
-         * serviceId
-         */
-        writer.write("    /**\r\n");
-        writer.write("     * serviceId\r\n");
-        writer.write("     */\r\n");
         for (Service s : device.getServices().values()) {
             writer.write(String.format("    public static final String ID_%s = \"%s\";\r\n", s.getType().getName(), s.getServiceId()));
         }
@@ -104,19 +96,18 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("    /**\r\n");
         writer.write("     * device & service handler;\r\n");
         writer.write("     */\r\n");
-        writer.write("\r\n");
         writer.write("    private Device _device;\r\n");
         writer.write("    private Map<String, ServiceHandler> _services = new HashMap<String, ServiceHandler>();\r\n");
         writer.write("\r\n");
 
         /**
          * public MediaRenderer(Context context, DeviceConfig config) throws UpnpException {
-         *     _device = config.build(context);
+         *     _device = config.build(context, DEVICE_TYPE);
          *     _services.put(ID_AVTransport, new AVTransport(_device.getService(ID_AVTransport)));
          * }
          */
         writer.write(String.format("    public %s(Context context, DeviceConfig config) throws UpnpException {\r\n", device.getDeviceType().getName()));
-        writer.write("        _device = config.build(context);\r\n");
+        writer.write("        _device = config.build(context, DEVICE_TYPE);\r\n");
         for (Service s : device.getServices().values()) {
             String name = s.getType().getName();
             writer.write(String.format("        _services.put(ID_%s, new %s(_device));\r\n", name, name));
@@ -135,22 +126,22 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("\r\n");
 
         /**
-         * public void start(MyCompletionHandler handler) throws UpnpException {
-         *     UpnpManager.getHost().register(_device, handler, this);
+         * public void start(UpnpCompletionHandler handler) throws UpnpException {
+         *     UpnpManager.getInstance().getHost().register(_device, handler, this);
          * }
          */
-        writer.write("    public void start(MyCompletionHandler handler) throws UpnpException {\r\n");
-        writer.write("        UpnpManager.getHost().register(_device, handler, this);\r\n");
+        writer.write("    public void start(UpnpCompletionHandler handler) throws UpnpException {\r\n");
+        writer.write("        UpnpManager.getInstance().getHost().register(_device, handler, this);\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
 
         /**
-         * public void stop(MyCompletionHandler handler) throws UpnpException {
-         *     UpnpManager.getHost().unregister(_device, handler);
+         * public void stop(UpnpCompletionHandler handler) throws UpnpException {
+         *     UpnpManager.getInstance().getHost().unregister(_device, handler);
          * }
          */
-        writer.write("    public void stop(MyCompletionHandler handler) throws UpnpException {\r\n");
-        writer.write("        UpnpManager.getHost().unregister(_device, handler);\r\n");
+        writer.write("    public void stop(UpnpCompletionHandler handler) throws UpnpException {\r\n");
+        writer.write("        UpnpManager.getInstance().getHost().unregister(_device, handler);\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
 
@@ -219,8 +210,8 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         builder.append("\r\n");
 
         builder.append("import miui.upnp.manager.UpnpManager;\r\n");
-        builder.append("import miui.upnp.manager.handler.MyActionHandler;\r\n");
-        builder.append("import miui.upnp.manager.handler.MyCompletionHandler;\r\n");
+        builder.append("import miui.upnp.manager.handler.UpnpActionHandler;\r\n");
+        builder.append("import miui.upnp.manager.handler.UpnpCompletionHandler;\r\n");
         builder.append("import miui.upnp.manager.host.DeviceConfig;\r\n");
         builder.append("import miui.upnp.manager.host.ServiceHandler;\r\n");
 
@@ -864,7 +855,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
          *    EventInfo info = EventInfoCreator.create(_service);
          * 
          *    try {
-         *        UpnpManager.getHost().sendEvents(info);
+         *        UpnpManager.getInstance().getHost().sendEvents(info);
          *    } catch (UpnpException e) {
          *        e.printStackTrace();
          *    }
@@ -874,7 +865,7 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("        EventInfo info = EventInfoCreator.create(_service);\r\n");
         writer.write("\r\n");
         writer.write("        try {\r\n");
-        writer.write("            UpnpManager.getHost().sendEvents(info);\r\n");
+        writer.write("            UpnpManager.getInstance().getHost().sendEvents(info);\r\n");
         writer.write("        } catch (UpnpException e) {\r\n");
         writer.write("            e.printStackTrace();\r\n");
         writer.write("        }\r\n");
