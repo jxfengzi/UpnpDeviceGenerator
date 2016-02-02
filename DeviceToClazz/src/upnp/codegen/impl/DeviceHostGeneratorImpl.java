@@ -876,6 +876,10 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
          * public void setLastChange(String lastChange) {
          *    _service.setPropertyValue(PROPERTY_LastChange, lastChange);
          * }
+         * 
+         * public String getLastChange() {
+         *    return (String)_service.setPropertyValue(PROPERTY_LastChange);
+         * }
          */
         for (Property p : s.getProperties()) {
             if (p.getDefinition().isSendEvents()) {
@@ -894,6 +898,19 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
                 }
                 else {
                     writer.write(String.format("         _service.setPropertyValue(PROPERTY_%s, the%s);\r\n", name, name));
+                }
+                writer.write("    }\r\n");
+                writer.write("\r\n");
+
+                writer.write(String.format("    public %s get%s() {\r\n", type, name));
+                if (p.getDefinition().getAllowedValueType() == AllowedValueType.LIST) {
+                    writer.write(String.format("         return %s.retrieveType((%s)_service.getPropertyValue(PROPERTY_%s));\r\n",
+                            type, 
+                            p.getDefinition().getDataType().getJavaDataType().getSimpleName(),
+                            name));
+                }
+                else {
+                    writer.write(String.format("         return (%s)_service.getPropertyValue(PROPERTY_%s);\r\n", type, name));
                 }
                 writer.write("    }\r\n");
                 writer.write("\r\n");
