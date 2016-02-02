@@ -8,8 +8,6 @@ import android.util.Log;
 public class PropertyDefinition implements Parcelable {
 
     private static final String TAG = PropertyDefinition.class.getSimpleName();
-    private static final String YES = "yes";
-    private static final String NO = "no";
 
     private boolean sendEvents;
     private String name;
@@ -29,7 +27,7 @@ public class PropertyDefinition implements Parcelable {
     }
 
     public void setSendEvents(String sendEvents) {
-        this.sendEvents = YES.equalsIgnoreCase(sendEvents);
+        this.sendEvents = DataType.BooleanValueOf(sendEvents);
     }
 
     public void setSendEvents(boolean sendEvents) {

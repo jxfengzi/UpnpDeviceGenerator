@@ -5,6 +5,7 @@ import android.util.Log;
 import upnp.typedef.exception.InvalidDataTypeException;
 
 public enum DataType {
+    UNKNOWN,
     BIN_BASE64,
     BIN_HEX,
     BOOLEAN,
@@ -39,10 +40,6 @@ public enum DataType {
             return false;
         }
 
-        if (clazz == Byte.class) {
-            return false;
-        }
-
         if (clazz == Boolean.class) {
             return false;
         }
@@ -56,19 +53,19 @@ public enum DataType {
         }
 
         if (clazz == Integer.class) {
-            return (Integer)min < (Integer)max;
+            return (Integer)min <= (Integer)max;
         }
 
         if (clazz == Long.class) {
-            return (Long)min < (Long)max;
+            return (Long)min <= (Long)max;
         }
 
         if (clazz == Float.class) {
-            return (Float)min < (Float)max;
+            return (Float)min <= (Float)max;
         }
 
         if (clazz == Double.class) {
-            return (Double)min < (Double)max;
+            return (Double)min <= (Double)max;
         }
 
         return false;
@@ -78,10 +75,6 @@ public enum DataType {
         Class<?> clazz = this.getJavaDataType();
 
         if (clazz == String.class) {
-            return false;
-        }
-
-        if (clazz == Byte.class) {
             return false;
         }
 
@@ -130,6 +123,7 @@ public enum DataType {
             case FIXED_14_4:
             case URI:
             case UUID:
+            case CHAR:
                 return String.class;
 
             case I1:
@@ -150,9 +144,6 @@ public enum DataType {
 
             case R8:
                 return Double.class;
-
-            case CHAR:
-                return Byte.class;
 
             case BOOLEAN:
                 return Boolean.class;
@@ -362,10 +353,6 @@ public enum DataType {
             return value.toString();
         }
 
-        if (clazz == Byte.class) {
-            return value.toString();
-        }
-
         if (clazz == Boolean.class) {
             return BooleanValueToString((Boolean) value);
         }
@@ -397,12 +384,42 @@ public enum DataType {
                 return Double.valueOf(string);
             }
 
-            if (clazz == Byte.class) {
-                return Byte.valueOf(string);
+            if (clazz == Boolean.class) {
+                return DataType.BooleanValueOf(string);
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public Object createObjectValue() {
+        Class<?> clazz = this.getJavaDataType();
+
+        try {
+            if (clazz == String.class) {
+                return "";
+            }
+
+            if (clazz == Integer.class) {
+                return 0;
+            }
+
+            if (clazz == Long.class) {
+                return 0L;
+            }
+
+            if (clazz == Float.class) {
+                return Float.valueOf(0.0f);
+            }
+
+            if (clazz == Double.class) {
+                return 0.0;
             }
 
             if (clazz == Boolean.class) {
-                return DataType.BooleanValueOf(string);
+                return Boolean.FALSE;
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -416,11 +433,13 @@ public enum DataType {
             return false;
         }
 
-        if (string.equals("1")) {
+        String v = string.toUpperCase();
+
+        if (v.equals("1") || v.equals("YES") || v.equals("TRUE")) {
             return true;
         }
 
-        if (string.equals("0")) {
+        if (v.equals("0") || v.equals("NO") || v.equals("FALSE")) {
             return false;
         }
 
