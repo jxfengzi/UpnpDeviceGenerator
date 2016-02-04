@@ -471,6 +471,10 @@ public class SessionManager extends ServiceHandler {
     }
 
     public void sendEvents() {
+        if (_service.isPropertyChanged()) {
+            return;
+        }
+
         EventInfo info = EventInfoCreator.create(_service);
 
         try {
@@ -478,6 +482,80 @@ public class SessionManager extends ServiceHandler {
         } catch (UpnpException e) {
             e.printStackTrace();
         }
+
+        _service.cleanPropertyState();
+    }
+
+    public void setA_ARG_TYPE_Direction(A_ARG_TYPE_Direction theA_ARG_TYPE_Direction) {
+         _service.setPropertyValue(PROPERTY_A_ARG_TYPE_Direction, theA_ARG_TYPE_Direction.getValue());
+    }
+
+    public A_ARG_TYPE_Direction getA_ARG_TYPE_Direction() {
+         return A_ARG_TYPE_Direction.retrieveType((String)_service.getPropertyValue(PROPERTY_A_ARG_TYPE_Direction));
+    }
+
+    public void setSinkCapabilityInfo(String theSinkCapabilityInfo) {
+         _service.setPropertyValue(PROPERTY_SinkCapabilityInfo, theSinkCapabilityInfo);
+    }
+
+    public String getSinkCapabilityInfo() {
+         return (String)_service.getPropertyValue(PROPERTY_SinkCapabilityInfo);
+    }
+
+    public void setSourceCapabilityInfo(String theSourceCapabilityInfo) {
+         _service.setPropertyValue(PROPERTY_SourceCapabilityInfo, theSourceCapabilityInfo);
+    }
+
+    public String getSourceCapabilityInfo() {
+         return (String)_service.getPropertyValue(PROPERTY_SourceCapabilityInfo);
+    }
+
+    public void setA_ARG_TYPE_InstanceIDs(String theA_ARG_TYPE_InstanceIDs) {
+         _service.setPropertyValue(PROPERTY_A_ARG_TYPE_InstanceIDs, theA_ARG_TYPE_InstanceIDs);
+    }
+
+    public String getA_ARG_TYPE_InstanceIDs() {
+         return (String)_service.getPropertyValue(PROPERTY_A_ARG_TYPE_InstanceIDs);
+    }
+
+    public void setA_ARG_TYPE_CapabilityInfo(String theA_ARG_TYPE_CapabilityInfo) {
+         _service.setPropertyValue(PROPERTY_A_ARG_TYPE_CapabilityInfo, theA_ARG_TYPE_CapabilityInfo);
+    }
+
+    public String getA_ARG_TYPE_CapabilityInfo() {
+         return (String)_service.getPropertyValue(PROPERTY_A_ARG_TYPE_CapabilityInfo);
+    }
+
+    public void setA_ARG_TYPE_SessionID(String theA_ARG_TYPE_SessionID) {
+         _service.setPropertyValue(PROPERTY_A_ARG_TYPE_SessionID, theA_ARG_TYPE_SessionID);
+    }
+
+    public String getA_ARG_TYPE_SessionID() {
+         return (String)_service.getPropertyValue(PROPERTY_A_ARG_TYPE_SessionID);
+    }
+
+    public void setCurrentSessionIDs(String theCurrentSessionIDs) {
+         _service.setPropertyValue(PROPERTY_CurrentSessionIDs, theCurrentSessionIDs);
+    }
+
+    public String getCurrentSessionIDs() {
+         return (String)_service.getPropertyValue(PROPERTY_CurrentSessionIDs);
+    }
+
+    public void setA_ARG_TYPE_Address(String theA_ARG_TYPE_Address) {
+         _service.setPropertyValue(PROPERTY_A_ARG_TYPE_Address, theA_ARG_TYPE_Address);
+    }
+
+    public String getA_ARG_TYPE_Address() {
+         return (String)_service.getPropertyValue(PROPERTY_A_ARG_TYPE_Address);
+    }
+
+    public void setA_ARG_TYPE_SessionStatus(A_ARG_TYPE_SessionStatus theA_ARG_TYPE_SessionStatus) {
+         _service.setPropertyValue(PROPERTY_A_ARG_TYPE_SessionStatus, theA_ARG_TYPE_SessionStatus.getValue());
+    }
+
+    public A_ARG_TYPE_SessionStatus getA_ARG_TYPE_SessionStatus() {
+         return A_ARG_TYPE_SessionStatus.retrieveType((String)_service.getPropertyValue(PROPERTY_A_ARG_TYPE_SessionStatus));
     }
 
 }

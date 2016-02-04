@@ -852,16 +852,26 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
 
         /**
          * public void sendEvents() {
+         *    if (_service.isPropertyChanged()) {
+         *       return;
+         *    }
+         *
          *    EventInfo info = EventInfoCreator.create(_service);
-         * 
+         *
          *    try {
          *        UpnpManager.getInstance().getHost().sendEvents(info);
          *    } catch (UpnpException e) {
          *        e.printStackTrace();
          *    }
+         *
+         *    _service.cleanPropertyState();
          * }
          */
         writer.write("    public void sendEvents() {\r\n");
+        writer.write("        if (! _service.isPropertyChanged()) {\r\n");
+        writer.write("            return;\r\n");
+        writer.write("        }\r\n");
+        writer.write("\r\n");
         writer.write("        EventInfo info = EventInfoCreator.create(_service);\r\n");
         writer.write("\r\n");
         writer.write("        try {\r\n");
@@ -869,6 +879,8 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
         writer.write("        } catch (UpnpException e) {\r\n");
         writer.write("            e.printStackTrace();\r\n");
         writer.write("        }\r\n");
+        writer.write("\r\n");
+        writer.write("        _service.cleanPropertyState();\r\n");
         writer.write("    }\r\n");
         writer.write("\r\n");
 
@@ -882,39 +894,37 @@ public class DeviceHostGeneratorImpl implements DeviceGenerator {
          * }
          */
         for (Property p : s.getProperties()) {
-            if (p.getDefinition().isSendEvents()) {
-                String name = p.getDefinition().getName();
-                String type = null;
-                if (p.getDefinition().getAllowedValueType() == AllowedValueType.LIST) {
-                    type = p.getDefinition().getName();
-                }
-                else {
-                    type = p.getDefinition().getDataType().getJavaDataType().getSimpleName();
-                }
-
-                writer.write(String.format("    public void set%s(%s the%s) {\r\n", name, type, name));
-                if (p.getDefinition().getAllowedValueType() == AllowedValueType.LIST) {
-                    writer.write(String.format("         _service.setPropertyValue(PROPERTY_%s, the%s.getValue());\r\n", name, type));
-                }
-                else {
-                    writer.write(String.format("         _service.setPropertyValue(PROPERTY_%s, the%s);\r\n", name, name));
-                }
-                writer.write("    }\r\n");
-                writer.write("\r\n");
-
-                writer.write(String.format("    public %s get%s() {\r\n", type, name));
-                if (p.getDefinition().getAllowedValueType() == AllowedValueType.LIST) {
-                    writer.write(String.format("         return %s.retrieveType((%s)_service.getPropertyValue(PROPERTY_%s));\r\n",
-                            type, 
-                            p.getDefinition().getDataType().getJavaDataType().getSimpleName(),
-                            name));
-                }
-                else {
-                    writer.write(String.format("         return (%s)_service.getPropertyValue(PROPERTY_%s);\r\n", type, name));
-                }
-                writer.write("    }\r\n");
-                writer.write("\r\n");
+            String name = p.getDefinition().getName();
+            String type = null;
+            if (p.getDefinition().getAllowedValueType() == AllowedValueType.LIST) {
+                type = p.getDefinition().getName();
             }
+            else {
+                type = p.getDefinition().getDataType().getJavaDataType().getSimpleName();
+            }
+
+            writer.write(String.format("    public void set%s(%s the%s) {\r\n", name, type, name));
+            if (p.getDefinition().getAllowedValueType() == AllowedValueType.LIST) {
+                writer.write(String.format("         _service.setPropertyValue(PROPERTY_%s, the%s.getValue());\r\n", name, type));
+            }
+            else {
+                writer.write(String.format("         _service.setPropertyValue(PROPERTY_%s, the%s);\r\n", name, name));
+            }
+            writer.write("    }\r\n");
+            writer.write("\r\n");
+
+            writer.write(String.format("    public %s get%s() {\r\n", type, name));
+            if (p.getDefinition().getAllowedValueType() == AllowedValueType.LIST) {
+                writer.write(String.format("         return %s.retrieveType((%s)_service.getPropertyValue(PROPERTY_%s));\r\n",
+                        type,
+                        p.getDefinition().getDataType().getJavaDataType().getSimpleName(),
+                        name));
+            }
+            else {
+                writer.write(String.format("         return (%s)_service.getPropertyValue(PROPERTY_%s);\r\n", type, name));
+            }
+            writer.write("    }\r\n");
+            writer.write("\r\n");
         }
     }
 
