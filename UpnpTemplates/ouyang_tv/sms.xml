@@ -18,6 +18,11 @@
                     <direction>out</direction>
                     <relatedStateVariable>SinkCapabilityInfo</relatedStateVariable>
                 </argument>
+                <argument>
+                    <name>NetInterfaceInfo</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>NetInterfaceInfo</relatedStateVariable>
+                </argument>
             </argumentList>
         </action>
         <action>
@@ -123,6 +128,10 @@
         </stateVariable>
         <stateVariable sendEvents="0">
             <name>SinkCapabilityInfo</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="0">
+            <name>NetInterfaceInfo</name>
             <dataType>string</dataType>
         </stateVariable>
         <stateVariable sendEvents="0">
