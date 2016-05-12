@@ -4,8 +4,10 @@ package test;
 import java.io.IOException;
 
 import upnp.codegen.DeviceGenerator;
-import upnp.codegen.impl.DeviceControlGeneratorImpl;
-import upnp.codegen.impl.DeviceHostGeneratorImpl;
+import upnp.codegen.impl.DeviceControlCGeneratorImpl;
+import upnp.codegen.impl.DeviceControlJavaGeneratorImpl;
+import upnp.codegen.impl.DeviceHostCGeneratorImpl;
+import upnp.codegen.impl.DeviceHostJavaGeneratorImpl;
 
 public class DeviceToClazz {
 
@@ -18,12 +20,23 @@ public class DeviceToClazz {
             }
 
             String url = args[0];
+            String type = args[1];
             String folder = System.getProperty("user.dir");
 
             System.out.println(String.format("Parse url: %s", url));
 
-            DeviceGenerator ctrlGennerator = new DeviceControlGeneratorImpl();
-            DeviceGenerator hostGennerator = new DeviceHostGeneratorImpl();
+            DeviceGenerator ctrlGennerator;
+            DeviceGenerator hostGennerator;
+            if (type == null || type.equals("java") || type.equals("Java") || type.equals("JAVA")) {
+                ctrlGennerator = new DeviceControlJavaGeneratorImpl();
+                hostGennerator = new DeviceHostJavaGeneratorImpl();
+            } else if (type.equals("c") || type.equals("C")) {
+                ctrlGennerator = new DeviceControlCGeneratorImpl();
+                hostGennerator = new DeviceHostCGeneratorImpl();
+            } else {
+                System.out.println(String.format("Unknown transform language type: %s, the generator only support JAVA or C", url));
+                break;
+            }
 
             try {
                 ctrlGennerator.generate(folder + "/device/control", url);

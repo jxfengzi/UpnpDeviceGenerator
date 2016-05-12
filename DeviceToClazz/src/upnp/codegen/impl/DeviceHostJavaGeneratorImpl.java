@@ -18,7 +18,7 @@ import upnp.typedef.property.Property;
 import upnp.typedef.property.PropertyDefinition;
 import upnp.factory.UpnpDeviceFactory;
 
-public class DeviceHostGeneratorImpl implements DeviceGenerator {
+public class DeviceHostJavaGeneratorImpl implements DeviceGenerator {
 
     private static final String TAG = "DeviceHostGeneratorImpl";
 

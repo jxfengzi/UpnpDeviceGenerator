@@ -152,6 +152,133 @@ public enum DataType {
         return null;
     }
 
+    public String getCDataType() {
+        switch (this) {
+            case BIN_BASE64:
+            case BIN_HEX:
+            case STRING:
+            case TIME:
+            case TIME_TZ:
+            case DATE:
+            case DATETIME:
+            case DATETIME_TZ:
+            case FIXED_14_4:
+            case URI:
+            case UUID:
+            case CHAR:
+                return "char *";
+
+            case I1:
+            case I2:
+            case INT:
+            case NUMBER:
+            case UI1:
+            case UI2:
+            case I4:
+                return "int";
+
+            case UI4:
+                return "long";
+
+            case FLOAT:
+            case R4:
+                return "float";
+
+            case R8:
+                return "double";
+
+            case BOOLEAN:
+                return "bool";
+        }
+
+        return null;
+    }
+
+    public String getCInternalValueName() {
+        switch (this) {
+            case BIN_BASE64:
+            case BIN_HEX:
+            case STRING:
+            case TIME:
+            case TIME_TZ:
+            case DATE:
+            case DATETIME:
+            case DATETIME_TZ:
+            case FIXED_14_4:
+            case URI:
+            case UUID:
+            case CHAR:
+                return "stringValue";
+
+            case I1:
+            case I2:
+            case INT:
+            case NUMBER:
+            case UI1:
+            case UI2:
+            case I4:
+                return "integerValue";
+
+            case UI4:
+                return "longValue";
+
+            case FLOAT:
+            case R4:
+                return "floatValue";
+
+            case R8:
+                return "doubleValue";
+
+            case BOOLEAN:
+                return "boolValue";
+        }
+
+        return null;
+    }
+
+    public String getCDataTypeTransformFuncName() {
+        switch (this) {
+            case BIN_BASE64:
+            case BIN_HEX:
+            case STRING:
+            case TIME:
+            case TIME_TZ:
+            case DATE:
+            case DATETIME:
+            case DATETIME_TZ:
+            case FIXED_14_4:
+            case URI:
+            case UUID:
+            case CHAR:
+                //String data type do not transform
+                return "Default";
+
+            case I1:
+            case I2:
+            case INT:
+            case NUMBER:
+            case UI1:
+            case UI2:
+            case I4:
+                return "DataType_StringToInt";
+
+            case UI4:
+                return "DataType_StringToLong";
+
+            case FLOAT:
+            case R4:
+                return "DataType_StringToFloat";
+
+            case R8:
+                return "DataType_StringToDouble";
+
+            case BOOLEAN:
+                return "DataType_StringToBoolean";
+        }
+
+        return null;
+    }
+
     public static DataType create(String type) throws InvalidDataTypeException {
         if (type.equals("bin.base64")) {
             return BIN_BASE64;
