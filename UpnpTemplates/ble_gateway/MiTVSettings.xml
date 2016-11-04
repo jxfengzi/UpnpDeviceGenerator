@@ -1,0 +1,300 @@
+<?xml version="1.0"?>
+<!--============================================================
+Title: MiTV/MiBox DDD
+
+================================================================-->
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <actionList>
+        <action>
+            <name>GetPowerState</name>
+            <argumentList>
+                <argument>
+                    <name>PowerState</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Power</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>SetPowerState</name>
+            <argumentList>
+                <argument>
+                    <name>PowerState</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Power</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SendNotification</name>
+            <argumentList>
+                <argument>
+                    <name>InNotification</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Notification</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>CancelNotification</name>
+            <argumentList>
+                <argument>
+                    <name>InNotification</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Notification</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>GetNetworking</name>
+            <argumentList>
+                <argument>
+                    <name>RetNetworking</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Networking</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>GetScannedWifiList</name>
+            <argumentList>
+                <argument>
+                    <name>RetScannedWifiList</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ScannedWifiList</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetNetwork</name>
+            <argumentList>
+                <argument>
+                    <name>InNetworking</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Networking</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>InPassword</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Password</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>GetNetworkSpeed</name>
+            <argumentList>
+                <argument>
+                    <name>RetSpeed</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>NetworkSpeed</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>GetDeviceName</name>
+            <argumentList>
+                <argument>
+                    <name>RetDeviceName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DeviceName</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetDeviceName</name>
+            <argumentList>
+                <argument>
+                    <name>InDeviceName</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>DeviceName</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>GetVolume</name>
+            <argumentList>
+                <argument>
+                    <name>RetVolume</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Volume</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetVolume</name>
+            <argumentList>
+                <argument>
+                    <name>InVolume</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Volume</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>GetVersion</name>
+            <argumentList>
+                <argument>
+                    <name>RetVersion</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Version</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>UpgradeSystem</name>
+            <argumentList>
+                <argument>
+                    <name>InVersion</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Version</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>GetInputSource</name>
+            <argumentList>
+                <argument>
+                    <name>RetInputSource</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>InputSource</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetInputSource</name>
+            <argumentList>
+                <argument>
+                    <name>inInputSource</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>InputSource</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>GetResolution</name>
+            <argumentList>
+                <argument>
+                    <name>RetResolution</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Resolution</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetResolution</name>
+            <argumentList>
+                <argument>
+                    <name>InResolution</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Resolution</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+    </actionList>
+    <serviceStateTable>
+        <!-- 运行状态 -->
+        <stateVariable sendEvents="yes">
+            <name>Power</name>
+            <dataType>string</dataType>
+            <allowedValueList>
+                <allowedValue>SLEEP</allowedValue>
+                <allowedValue>RUNNING</allowedValue>
+            </allowedValueList>
+        </stateVariable>
+
+        <!-- 设备名字 -->
+        <stateVariable sendEvents="yes">
+            <name>DeviceName</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <!-- 网络连接状态 -->
+        <stateVariable sendEvents="yes">
+            <name>Networking</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <!-- 系统版本信息 -->
+        <stateVariable sendEvents="yes">
+            <name>Version</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <!-- 提醒消息 -->
+        <stateVariable sendEvents="no">
+            <name>Notification</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <!-- 扫描到的 WiFi 列表-->
+        <stateVariable sendEvents="no">
+            <name>ScannedWifiList</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <!-- 网速 -->
+        <stateVariable sendEvents="no">
+            <name>NetworkSpeed</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <!-- 音量 -->
+        <stateVariable sendEvents="no">
+            <name>Volume</name>
+            <dataType>ui1</dataType>
+            <allowedValueRange>
+                <minimum>0</minimum>
+                <maximum>100</maximum>
+                <step>1</step>
+            </allowedValueRange>
+        </stateVariable>
+
+        <!-- 输入源 -->
+        <stateVariable sendEvents="yes">
+            <name>InputSource</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <!-- 画质设置 -->
+        <stateVariable sendEvents="no">
+            <name>Resolution</name>
+            <dataType>string</dataType>
+            <allowedValueList>
+                <allowedValue>E4K2K30HZ</allowedValue>
+                <allowedValue>E4K2KP60HZ</allowedValue>
+                <allowedValue>E4K2KP50HZ</allowedValue>
+                <allowedValue>E1080P60HZ</allowedValue>
+                <allowedValue>E1080P50HZ</allowedValue>
+                <allowedValue>E720P60HZ</allowedValue>
+                <allowedValue>E720P50HZ</allowedValue>
+            </allowedValueList>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>Password</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+    </serviceStateTable>
+
+</scpd>

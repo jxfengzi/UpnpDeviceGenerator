@@ -1,0 +1,247 @@
+<?xml version="1.0"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+<specVersion>
+	<major>1</major>
+	<minor>0</minor>
+</specVersion>
+
+<actionList>
+	<action>
+		<name>BW_StartScan</name>
+		<argumentList>
+			<argument>
+				<name>Filter</name>
+				<relatedStateVariable>A_ARG_TYPE_Filter</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+		</argumentList>
+	</action>
+
+	<action>
+		<name>BW_StopScan</name>
+		<argumentList>
+		</argumentList>
+	</action>
+
+	<action>
+		<name>BW_GetAvaliableDevices</name>
+		<argumentList>
+			<argument>
+				<name>RetAvaliableDevices</name>
+				<relatedStateVariable>A_ARG_TYPE_BleDevices</relatedStateVariable>
+				<direction>out</direction>
+			</argument>
+		</argumentList>
+	</action>
+
+	<action>
+		<name>BW_GetConnectedDevices</name>
+		<argumentList>
+			<argument>
+				<name>RetConnectedDevices</name>
+				<relatedStateVariable>A_ARG_TYPE_BleDevices</relatedStateVariable>
+				<direction>out</direction>
+			</argument>
+		</argumentList>
+	</action>
+
+	<action>
+		<name>BW_DiscoverServices</name>
+		<argumentList>
+			<argument>
+				<name>BleDevice</name>
+				<relatedStateVariable>A_ARG_TYPE_BleDevice</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+		</argumentList>
+	</action>
+	
+	<action>
+		<name>BW_KeepAlive</name>
+		<argumentList>
+			<argument>
+				<name>BleDevice</name>
+				<relatedStateVariable>A_ARG_TYPE_BleDevice</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+			<argument>
+				<name>IsAlive</name>
+				<relatedStateVariable>A_ARG_TYPE_IsAlive</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+		</argumentList>
+	</action>
+
+	<action>
+		<name>BW_ReadCharacteristic</name>
+		<argumentList>
+			<argument>
+				<name>BleDevice</name>
+				<relatedStateVariable>A_ARG_TYPE_BleDevice</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+			<argument>
+				<name>BleService</name>
+				<relatedStateVariable>A_ARG_TYPE_BleService</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+			<argument>
+				<name>BleCharacteristic</name>
+				<relatedStateVariable>A_ARG_TYPE_BleCharacteristic</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+		</argumentList>
+	</action>
+
+	<action>
+		<name>BW_WriteCharacteristic</name>
+		<argumentList>
+			<argument>
+				<name>BleDevice</name>
+				<relatedStateVariable>A_ARG_TYPE_BleDevice</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+			<argument>
+				<name>BleService</name>
+				<relatedStateVariable>A_ARG_TYPE_BleService</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+			<argument>
+				<name>BleCharacteristic</name>
+				<relatedStateVariable>A_ARG_TYPE_BleCharacteristic</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+			<argument>
+				<name>Data</name>
+				<relatedStateVariable>A_ARG_TYPE_Data</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+		</argumentList>
+	</action>
+
+	<action>
+		<name>BW_EnableCharacteristicNotification</name>
+		<argumentList>
+			<argument>
+				<name>BleDevice</name>
+				<relatedStateVariable>A_ARG_TYPE_BleDevice</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+			<argument>
+				<name>BleService</name>
+				<relatedStateVariable>A_ARG_TYPE_BleService</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+			<argument>
+				<name>BleCharacteristic</name>
+				<relatedStateVariable>A_ARG_TYPE_BleCharacteristic</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+		</argumentList>
+	</action>
+
+	<action>
+		<name>BW_DisableCharacteristicNotification</name>
+		<argumentList>
+			<argument>
+				<name>BleDevice</name>
+				<relatedStateVariable>A_ARG_TYPE_BleDevice</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+			<argument>
+				<name>BleService</name>
+				<relatedStateVariable>A_ARG_TYPE_BleService</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+			<argument>
+				<name>BleCharacteristic</name>
+				<relatedStateVariable>A_ARG_TYPE_BleCharacteristic</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+		</argumentList>
+	</action>
+</actionList>
+
+
+<serviceStateTable>
+	<stateVariable sendEvents="no">
+		<name>A_ARG_TYPE_Filter</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+	<stateVariable sendEvents="no">
+		<name>A_ARG_TYPE_BleDevice</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+	<stateVariable sendEvents="no">
+		<name>A_ARG_TYPE_IsAlive</name>
+		<dataType>boolean</dataType>
+		<defaultValue>1</defaultValue>
+	</stateVariable>
+
+	<stateVariable sendEvents="no">
+		<name>A_ARG_TYPE_BleDevices</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+	<stateVariable sendEvents="no">
+		<name>A_ARG_TYPE_BleService</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+	<stateVariable sendEvents="no">
+		<name>A_ARG_TYPE_BleCharacteristic</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+	<stateVariable sendEvents="no">
+		<name>A_ARG_TYPE_Data</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+	<!-- -->
+	<stateVariable sendEvents="yes">
+		<name>BW_ScanResult</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+	
+	<stateVariable sendEvents="yes">
+		<name>BW_ConnectionState</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+	<stateVariable sendEvents="yes">
+		<name>BW_DiscoveredServices</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+	<stateVariable sendEvents="yes">
+		<name>BW_CharacteristicWrited</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+	<stateVariable sendEvents="yes">
+		<name>BW_CharacteristicReaded</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+	<stateVariable sendEvents="yes">
+		<name>BW_CharacteristicNotified</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+
+</serviceStateTable>
+</scpd>

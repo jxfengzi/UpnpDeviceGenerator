@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+<specVersion>
+	<major>1</major>
+	<minor>0</minor>
+</specVersion>
+
+<actionList>
+	<action>
+		<name>RB_setMetaData</name>
+		<argumentList>
+			<argument>
+				<name>MetaData</name>
+				<relatedStateVariable>A_ARG_TYPE_MetaData</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+		</argumentList>
+	</action>
+	<action>
+		<name>RB_setVoiceReply</name>
+		<argumentList>
+			<argument>
+				<name>Reply</name>
+				<relatedStateVariable>A_ARG_TYPE_Reply</relatedStateVariable>
+				<direction>in</direction>
+			</argument>
+		</argumentList>
+	</action>
+
+</actionList>
+
+
+<serviceStateTable>
+	<!-- -->
+	<stateVariable sendEvents="yes">
+		<name>RB_VoiceStart</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+	<stateVariable sendEvents="yes">
+		<name>RB_Voice</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+    <stateVariable sendEvents="yes">
+		<name>RB_MetaData</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+	<stateVariable sendEvents="no">
+		<name>A_ARG_TYPE_MetaData</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+	<stateVariable sendEvents="no">
+		<name>A_ARG_TYPE_Reply</name>
+		<dataType>string</dataType>
+		<defaultValue></defaultValue>
+	</stateVariable>
+</serviceStateTable>
+</scpd>

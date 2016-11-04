@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--============================================================
+Title: MiTV/MiBox DDD
+
+================================================================-->
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <device>
+        <deviceType>urn:schemas-upnp-org:device:MiTV:0.1</deviceType>
+        <friendlyName></friendlyName>
+        <manufacturer></manufacturer>
+        <manufacturerURL></manufacturerURL>
+        <modelDescription></modelDescription>
+        <modelName></modelName>
+        <modelNumber></modelNumber>
+        <modelURL></modelURL>
+        <serialNumber></serialNumber>
+        <UDN></UDN>
+        <UPC></UPC>
+        <serviceList>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:MiTVSettings:0.1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:MiTVSettings</serviceId>
+                <SCPDURL>/MiTVSettings.xml</SCPDURL>
+                <controlURL></controlURL>
+                <eventSubURL></eventSubURL>
+            </service>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:MiTVRunning:0.1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:MiTVRunning</serviceId>
+                <SCPDURL>/MiTVRunning.xml</SCPDURL>
+                <controlURL></controlURL>
+                <eventSubURL></eventSubURL>
+			</service>
+			<service>
+                <serviceType>urn:schemas-upnp-org:service:BleOperation:0.1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:BleOperation</serviceId>
+                <SCPDURL>/BleOperation.xml</SCPDURL>
+                <controlURL></controlURL>
+                <eventSubURL></eventSubURL>
+            </service>
+        </serviceList>
+    </device>
+</root>

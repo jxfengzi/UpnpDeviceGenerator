@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!--============================================================
+Title: MiTV/MiBox DDD
+
+================================================================-->
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <actionList>
+        <action>
+            <name>SetPlayState</name>
+            <argumentList>
+                <argument>
+                    <name>InPlayState</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>PlayState</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>GetPlayState</name>
+            <argumentList>
+                <argument>
+                    <name>OutPlayState</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>PlayState</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>StartApp</name>
+            <argumentList>
+                <argument>
+                    <name>InApplication</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Application</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>StopApp</name>
+            <argumentList>
+                <argument>
+                    <name>InApplication</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Application</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>SendCommand</name>
+            <argumentList>
+                <argument>
+                    <name>InApplication</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Application</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>InCommand</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Command</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+    </actionList>
+
+    <serviceStateTable>
+        <stateVariable sendEvents="true">
+            <name>PlayState</name>
+            <dataType>string</dataType>
+            <allowedValueList>
+                <allowedValue>Playing</allowedValue>
+                <allowedValue>Paused</allowedValue>
+                <allowedValue>Stopped</allowedValue>
+            </allowedValueList>
+        </stateVariable>
+        <!-- 当前运行的 APP -->
+        <stateVariable sendEvents="yes">
+            <name>RunningApp</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Application</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Command</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+    </serviceStateTable>
+
+</scpd>
